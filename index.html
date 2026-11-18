@@ -1,0 +1,553 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>לקחתי\שכחתי?</title>
+<meta name="theme-color" content="#2e7d32">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="לקחתי?">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{
+  --bg:#f4f6f3; --card:#fff; --text:#1d241e; --muted:#6b756c; --line:#e2e7e1;
+  --accent:#2e7d32; --accent-soft:#e3f1e4; --danger:#c62828; --shadow:0 1px 3px rgba(0,0,0,.08);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){ --bg:#121512; --card:#1c211d; --text:#e8ece8; --muted:#9aa59b; --line:#2c332d;
+    --accent:#66bb6a; --accent-soft:#1f3321; --danger:#ef5350; --shadow:none; color-scheme:dark; }
+}
+:root[data-theme="dark"]{ --bg:#121512; --card:#1c211d; --text:#e8ece8; --muted:#9aa59b; --line:#2c332d;
+  --accent:#66bb6a; --accent-soft:#1f3321; --danger:#ef5350; --shadow:none; color-scheme:dark; }
+:root[data-theme="light"]{ color-scheme:light; }
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--text);font:16px/1.4 system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+  display:flex;flex-direction:column;min-height:100dvh}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+header{position:sticky;top:0;z-index:5;background:var(--bg);padding:calc(env(safe-area-inset-top) + 10px) 16px 8px;
+  border-bottom:1px solid var(--line)}
+.top{display:flex;align-items:center;gap:8px}
+h1{font-size:19px;margin:0;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.presetbar{display:flex;gap:8px;align-items:center;padding-top:8px}
+.presetbar select{flex:1;min-width:0;padding:8px 10px;font-size:14px}
+.thumb{flex:none;width:44px;height:44px;border-radius:10px;object-fit:cover;background:var(--line)}
+.link{color:var(--accent);text-decoration:none;font-size:13px;display:inline-block;margin-inline-start:6px}
+.imgprev{display:flex;gap:10px;align-items:center;margin-top:6px}
+.imgprev img{width:72px;height:72px;border-radius:10px;object-fit:cover}
+.viewer{max-width:100%;max-height:70dvh;display:block;margin:0 auto 12px;border-radius:12px}
+h1 span{color:var(--accent)}
+.icon-btn{flex:none;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-size:20px;background:var(--card);box-shadow:var(--shadow)}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding:10px 0 2px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;padding:6px 14px;border-radius:999px;background:var(--card);box-shadow:var(--shadow);font-size:14px;white-space:nowrap}
+.tab.active{background:var(--accent);color:#fff}
+.tab.add{color:var(--accent);font-weight:700}
+.stats{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted);padding-top:6px}
+.stats button{color:var(--accent);font-size:13px;padding:4px 0}
+main{flex:1;padding:12px 16px 110px}
+ul{list-style:none;margin:0;padding:0}
+.item{display:flex;align-items:center;gap:10px;background:var(--card);border-radius:14px;padding:10px 12px;margin-bottom:8px;box-shadow:var(--shadow)}
+.check{flex:none;width:28px;height:28px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;color:#fff;font-size:16px}
+.item.done .check{background:var(--accent);border-color:var(--accent)}
+.body{flex:1;min-width:0}
+.name{font-weight:600;overflow-wrap:anywhere}
+.meta{font-size:13px;color:var(--muted);overflow-wrap:anywhere}
+.amt{display:inline-block;background:var(--accent-soft);color:var(--accent);border-radius:6px;padding:0 6px;margin-inline-end:6px;font-weight:600}
+.item.done .name{text-decoration:line-through;color:var(--muted)}
+.item.done{opacity:.7}
+.del{flex:none;width:34px;height:34px;border-radius:10px;color:var(--muted);font-size:18px}
+.section{font-size:13px;color:var(--muted);margin:16px 4px 8px}
+.empty{text-align:center;color:var(--muted);padding:50px 20px}
+.empty b{display:block;font-size:40px;margin-bottom:8px}
+.addbar{position:fixed;inset-inline:0;bottom:0;z-index:6;background:var(--bg);border-top:1px solid var(--line);
+  padding:10px 16px calc(env(safe-area-inset-bottom) + 10px);display:flex;gap:8px}
+.addbar input{flex:1;min-width:0}
+input[type=text],input[type=url],input:not([type]),textarea,select{width:100%;padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--card);outline:none}
+input:focus,textarea:focus{border-color:var(--accent)}
+.btn{padding:12px 16px;border-radius:12px;background:var(--accent);color:#fff;font-weight:600;white-space:nowrap}
+.btn.ghost{background:var(--card);color:var(--text);border:1px solid var(--line)}
+.btn.danger{background:var(--danger)}
+.btn.small{padding:8px 12px;font-size:14px}
+/* sheet */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:20;display:none;align-items:flex-end;justify-content:center}
+.overlay.open{display:flex}
+.sheet{background:var(--bg);width:100%;max-width:560px;max-height:88dvh;overflow:auto;border-radius:20px 20px 0 0;
+  padding:18px 16px calc(env(safe-area-inset-bottom) + 18px);animation:up .18s ease-out}
+@keyframes up{from{transform:translateY(40px);opacity:.5}}
+.sheet h2{margin:0 0 12px;font-size:18px}
+.field{margin-bottom:10px}
+.field label{display:block;font-size:13px;color:var(--muted);margin-bottom:4px}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.row>.btn{flex:1}
+.menu-list button{display:flex;align-items:center;gap:12px;width:100%;text-align:start;padding:14px 12px;background:var(--card);border-radius:12px;margin-bottom:8px;box-shadow:var(--shadow)}
+.menu-list button span:first-child{font-size:20px;width:26px;text-align:center}
+.menu-list small{display:block;color:var(--muted);font-size:12px}
+.preset{display:flex;align-items:center;gap:8px;background:var(--card);border-radius:12px;padding:10px 12px;margin-bottom:8px;box-shadow:var(--shadow)}
+.preset .body small{color:var(--muted)}
+.toast{position:fixed;bottom:calc(env(safe-area-inset-bottom) + 84px);inset-inline:16px;margin:auto;max-width:420px;z-index:30;
+  background:#263238;color:#fff;border-radius:12px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px;
+  transform:translateY(20px);opacity:0;pointer-events:none;transition:.2s}
+.toast.show{transform:none;opacity:1;pointer-events:auto}
+.toast button{color:#a5d6a7;font-weight:700}
+textarea{min-height:70px;resize:vertical}
+.hint{font-size:12px;color:var(--muted);margin:6px 0 12px}
+</style>
+</head>
+<body>
+<header>
+  <div class="top">
+    <h1>לקחתי<span>\</span>שכחתי?</h1>
+    <button class="icon-btn" id="refreshBtn" aria-label="רענון">🔄</button>
+    <button class="icon-btn" id="themeBtn" aria-label="מצב תצוגה">🌓</button>
+    <button class="icon-btn" id="presetsBtn" aria-label="ניהול תבניות">⭐</button>
+    <button class="icon-btn" id="menuBtn" aria-label="שיתוף וגיבוי">⋯</button>
+  </div>
+  <nav class="tabs" id="tabs"></nav>
+  <div class="presetbar">
+    <select id="presetSelect" aria-label="טעינת תבנית"></select>
+  </div>
+  <div class="stats"><span id="stats"></span><button id="clearDone" hidden>נקה מה שלקחתי</button></div>
+</header>
+
+<main><ul id="list"></ul></main>
+
+<form class="addbar" id="addForm" autocomplete="off">
+  <input id="addInput" placeholder="מה צריך לקנות?" enterkeyhint="done" aria-label="פריט חדש">
+  <button class="btn" type="submit">הוסף</button>
+</form>
+
+<div class="overlay" id="overlay"><div class="sheet" id="sheet"></div></div>
+<div class="toast" id="toast"><span id="toastMsg"></span><button id="toastBtn"></button></div>
+<input type="file" id="fileInput" accept=".json,application/json" hidden>
+
+<script>
+'use strict';
+const KEY = 'lakachti.v1';
+const $ = s => document.querySelector(s);
+const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* ---------- state ---------- */
+function freshState(){
+  const id = uid();
+  return { version:1, activeListId:id, lists:[{ id, name:'הסופר', items:[] }], presets:[] };
+}
+function load(){
+  try{
+    const s = JSON.parse(localStorage.getItem(KEY));
+    if (s && Array.isArray(s.lists) && s.lists.length) { s.presets ||= []; return s; }
+  }catch(e){}
+  return freshState();
+}
+let state = load();
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){ toast('שגיאה בשמירה'); } }
+const active = () => state.lists.find(l => l.id === state.activeListId) || state.lists[0];
+if (navigator.storage?.persist) navigator.storage.persist().catch(()=>{});
+
+/* ---------- render ---------- */
+function render(){
+  const list = active();
+  state.activeListId = list.id;
+  $('#tabs').innerHTML = state.lists.map(l =>
+    `<button class="tab ${l.id===list.id?'active':''}" data-id="${l.id}">${esc(l.name)}${l.items.some(i=>!i.checked)?` · ${l.items.filter(i=>!i.checked).length}`:''}</button>`
+  ).join('') + `<button class="tab add" id="newListTab">＋ רשימה</button>`;
+
+  $('#presetSelect').innerHTML = `<option value="">⭐ ${state.presets.length ? 'טען תבנית…' : 'אין תבניות (שמרו דרך ⭐)'}</option>` +
+    state.presets.map(p => `<option value="${p.id}">${esc(p.name)} (${p.items.length})</option>`).join('');
+  $('#presetSelect').disabled = !state.presets.length;
+
+  const todo = list.items.filter(i => !i.checked), done = list.items.filter(i => i.checked);
+  $('#stats').textContent = list.items.length ? `נשארו ${todo.length} מתוך ${list.items.length}` : '';
+  $('#clearDone').hidden = !done.length;
+
+  if (!list.items.length){
+    $('#list').innerHTML = `<li class="empty"><b>🛒</b>הרשימה ריקה.<br>הוסיפו פריט למטה או טענו תבנית ⭐</li>`;
+    return;
+  }
+  const row = i => `<li class="item ${i.checked?'done':''}" data-id="${i.id}">
+      <button class="check" data-act="toggle" aria-label="סמן">${i.checked?'✓':''}</button>
+      ${i.image?`<img class="thumb" src="${esc(i.image)}" alt="" data-act="img" loading="lazy">`:''}
+      <div class="body" data-act="edit">
+        <div class="name">${esc(i.name)}</div>
+        ${(i.amount||i.note||i.link)?`<div class="meta">${i.amount?`<span class="amt">${esc(i.amount)}</span>`:''}${esc(i.note)}${i.link?`<a class="link" href="${esc(i.link)}" target="_blank" rel="noopener noreferrer">🔗 ${esc(linkLabel(i.link))}</a>`:''}</div>`:''}
+      </div>
+      <button class="del" data-act="del" aria-label="מחק">✕</button></li>`;
+  $('#list').innerHTML = todo.map(row).join('') +
+    (done.length ? `<li class="section">לקחתי ✓</li>` + done.map(row).join('') : '');
+}
+const commit = () => { save(); render(); };
+const linkLabel = u => { try{ return new URL(u).hostname.replace(/^www\./,''); }catch(e){ return 'קישור'; } };
+const cleanLink = u => { u = String(u||'').trim(); if (!u) return ''; if (!/^https?:\/\//i.test(u)) u = 'https://' + u;
+  try{ const x = new URL(u); return /^https?:$/.test(x.protocol) ? x.href : ''; }catch(e){ return ''; } };
+const cleanImage = s => { s = String(s||''); return /^data:image\/(jpeg|png|webp|gif);base64,[A-Za-z0-9+/=]+$/.test(s) || /^https:\/\//.test(s) ? s : ''; };
+
+/* resize photo to small JPEG so localStorage stays light */
+function resizeImage(file, max = 480){
+  return new Promise((res, rej) => {
+    const url = URL.createObjectURL(file), img = new Image();
+    img.onload = () => {
+      const k = Math.min(1, max / Math.max(img.width, img.height));
+      const c = document.createElement('canvas'); c.width = Math.round(img.width*k); c.height = Math.round(img.height*k);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url); res(c.toDataURL('image/jpeg', 0.72));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); rej(); };
+    img.src = url;
+  });
+}
+
+/* ---------- theme ---------- */
+const THEME_KEY = 'lakachti.theme', themes = ['auto','light','dark'], themeIcon = { auto:'🌓', light:'☀️', dark:'🌙' },
+  themeName = { auto:'לפי המכשיר', light:'בהיר', dark:'כהה' };
+function applyTheme(t){
+  if (t === 'auto') document.documentElement.removeAttribute('data-theme');
+  else document.documentElement.setAttribute('data-theme', t);
+  $('#themeBtn').textContent = themeIcon[t];
+  const dark = t === 'dark' || (t === 'auto' && matchMedia('(prefers-color-scheme: dark)').matches);
+  document.querySelector('meta[name=theme-color]').content = dark ? '#121512' : '#2e7d32';
+}
+let theme = (() => { try{ return localStorage.getItem(THEME_KEY) || 'auto'; }catch(e){ return 'auto'; } })();
+applyTheme(theme);
+$('#themeBtn').onclick = () => {
+  theme = themes[(themes.indexOf(theme)+1) % 3];
+  try{ localStorage.setItem(THEME_KEY, theme); }catch(e){}
+  applyTheme(theme); toast('תצוגה: ' + themeName[theme]);
+};
+matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', () => applyTheme(theme));
+
+/* ---------- refresh ---------- */
+$('#refreshBtn').onclick = async () => {
+  try{ const r = await navigator.serviceWorker?.getRegistration(); await r?.update(); }catch(e){}
+  location.reload();
+};
+
+/* ---------- preset dropdown ---------- */
+$('#presetSelect').onchange = e => {
+  const p = state.presets.find(x => x.id === e.target.value);
+  e.target.value = '';
+  if (p) loadPreset(p);
+};
+
+/* ---------- items ---------- */
+$('#addForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const inp = $('#addInput'), name = inp.value.trim();
+  if (!name) return;
+  const list = active();
+  const dup = list.items.find(i => i.name.trim() === name);
+  if (dup){ dup.checked = false; toast(`"${name}" כבר ברשימה`); }
+  else list.items.unshift({ id:uid(), name, amount:'', note:'', link:'', image:'', checked:false, createdAt:Date.now() });
+  inp.value = ''; commit(); inp.focus();
+});
+
+$('#list').addEventListener('click', e => {
+  const act = e.target.closest('[data-act]')?.dataset.act; if (!act) return;
+  const li = e.target.closest('.item'), list = active();
+  const idx = list.items.findIndex(i => i.id === li.dataset.id), item = list.items[idx];
+  if (act === 'toggle'){ item.checked = !item.checked; commit(); }
+  if (act === 'del'){
+    list.items.splice(idx, 1); commit();
+    toast(`"${item.name}" נמחק`, 'בטל', () => { list.items.splice(idx, 0, item); commit(); });
+  }
+  if (act === 'edit' && !e.target.closest('a')) editItem(item);
+  if (act === 'img') openSheet(`<img class="viewer" src="${esc(item.image)}" alt=""><h2>${esc(item.name)}</h2>
+    <div class="row"><button class="btn" id="vEdit">עריכה</button><button class="btn ghost" data-close>סגור</button></div>`), $('#vEdit').onclick = () => editItem(item);
+});
+
+$('#clearDone').onclick = () => {
+  const list = active(), before = list.items.slice();
+  list.items = list.items.filter(i => !i.checked); commit();
+  toast('נוקו פריטים שנלקחו', 'בטל', () => { list.items = before; commit(); });
+};
+
+function editItem(item){
+  openSheet(`<h2>עריכת פריט</h2>
+    <div class="field"><label>שם</label><input id="eName" value="${esc(item.name)}"></div>
+    <div class="field"><label>כמות</label><input id="eAmt" value="${esc(item.amount)}" placeholder="למשל: 2, 1 ק״ג, 3 חבילות"></div>
+    <div class="field"><label>הערה</label><textarea id="eNote" placeholder="למשל: רק של תנובה, 3%">${esc(item.note)}</textarea></div>
+    <div class="field"><label>קישור</label><input id="eLink" type="url" inputmode="url" dir="ltr" value="${esc(item.link||'')}" placeholder="https://..."></div>
+    <div class="field"><label>תמונה</label>
+      <div class="row"><button class="btn ghost small" id="eCam">📷 צלם / בחר</button><button class="btn ghost small" id="eImgUrl">🌐 מקישור</button></div>
+      <div class="imgprev" id="ePrev"></div>
+      <input type="file" id="eFile" accept="image/*" hidden></div>
+    <div class="row"><button class="btn" id="eSave">שמור</button><button class="btn ghost" data-close>ביטול</button></div>`);
+  let image = item.image || '';
+  const prev = () => { $('#ePrev').innerHTML = image ? `<img src="${esc(image)}" alt=""><button class="btn ghost small" id="eRm">הסר תמונה</button>` : '';
+    if (image) $('#eRm').onclick = () => { image = ''; prev(); }; };
+  prev();
+  $('#eCam').onclick = () => $('#eFile').click();
+  $('#eFile').onchange = async e => { const f = e.target.files[0]; if (!f) return;
+    try{ image = await resizeImage(f); prev(); }catch(err){ toast('לא הצלחתי לטעון את התמונה'); } };
+  $('#eImgUrl').onclick = () => { const u = prompt('כתובת התמונה (https://...):', /^https:/.test(image)?image:''); if (u == null) return;
+    const c = cleanImage(u.trim()); if (!c){ toast('כתובת לא תקינה'); return; } image = c; prev(); };
+  $('#eSave').onclick = () => {
+    const link = $('#eLink').value.trim();
+    if (link && !cleanLink(link)) return toast('קישור לא תקין');
+    const old = { ...item };
+    item.name = $('#eName').value.trim() || item.name;
+    item.amount = $('#eAmt').value.trim();
+    item.note = $('#eNote').value.trim();
+    item.link = cleanLink(link);
+    item.image = image;
+    closeSheet();
+    try{ localStorage.setItem(KEY, JSON.stringify(state)); render(); }
+    catch(e){ Object.assign(item, old); render(); toast('אין מספיק מקום בזיכרון — נסו תמונה קטנה יותר או מחקו תמונות'); }
+  };
+}
+
+/* ---------- lists ---------- */
+$('#tabs').addEventListener('click', e => {
+  const t = e.target.closest('.tab'); if (!t) return;
+  if (t.id === 'newListTab') return listForm();
+  if (t.dataset.id === state.activeListId) return listMenu();
+  state.activeListId = t.dataset.id; commit();
+});
+
+function listForm(list){
+  openSheet(`<h2>${list?'שינוי שם רשימה':'רשימה חדשה'}</h2>
+    <div class="field"><input id="lName" value="${esc(list?.name||'')}" placeholder="למשל: בית מרקחת"></div>
+    <div class="row"><button class="btn" id="lSave">שמור</button><button class="btn ghost" data-close>ביטול</button></div>`);
+  $('#lName').focus();
+  $('#lSave').onclick = () => {
+    const name = $('#lName').value.trim(); if (!name) return;
+    if (list) list.name = name;
+    else { const id = uid(); state.lists.push({ id, name, items:[] }); state.activeListId = id; }
+    closeSheet(); commit();
+  };
+}
+
+function listMenu(){
+  const list = active();
+  openSheet(`<h2>${esc(list.name)}</h2><div class="menu-list">
+    <button id="lmRename"><span>✏️</span><span>שינוי שם</span></button>
+    <button id="lmUncheck"><span>↺</span><span>בטל סימון לכל הפריטים</span></button>
+    <button id="lmDelete"><span>🗑️</span><span>מחק רשימה</span></button></div>`);
+  $('#lmRename').onclick = () => listForm(list);
+  $('#lmUncheck').onclick = () => { list.items.forEach(i => i.checked = false); closeSheet(); commit(); };
+  $('#lmDelete').onclick = () => {
+    if (!confirm(`למחוק את "${list.name}"?`)) return;
+    const idx = state.lists.indexOf(list);
+    state.lists.splice(idx, 1);
+    if (!state.lists.length){ const id = uid(); state.lists.push({ id, name:'הסופר', items:[] }); }
+    state.activeListId = state.lists[Math.max(0, idx-1)].id;
+    closeSheet(); commit();
+    toast(`"${list.name}" נמחקה`, 'בטל', () => { state.lists.splice(idx, 0, list); state.activeListId = list.id; commit(); });
+  };
+}
+
+/* ---------- presets ---------- */
+const stripItems = items => items.map(({name, amount, note, link, image}) => ({ name, amount:amount||'', note:note||'', link:link||'', image:image||'' }));
+function mergeInto(list, items){
+  let added = 0;
+  for (const p of items){
+    const ex = list.items.find(i => i.name.trim() === p.name.trim());
+    if (ex){ ex.checked = false; continue; }
+    list.items.push({ id:uid(), name:p.name, amount:p.amount||'', note:p.note||'', link:p.link||'', image:p.image||'', checked:false, createdAt:Date.now() });
+    added++;
+  }
+  return added;
+}
+
+$('#presetsBtn').onclick = presetsSheet;
+function presetsSheet(){
+  const list = active();
+  openSheet(`<h2>⭐ תבניות</h2>
+    <p class="hint">תבנית = רשימה קבועה (למשל "קנייה שבועית") שאפשר לטעון בלחיצה.</p>
+    <button class="btn" id="pSave" style="width:100%;margin-bottom:14px" ${list.items.length?'':'disabled'}>שמור את "${esc(list.name)}" כתבנית</button>
+    ${state.presets.length ? state.presets.map(p => `<div class="preset" data-id="${p.id}">
+        <div class="body"><div class="name">${esc(p.name)}</div><small>${p.items.length} פריטים</small></div>
+        <button class="btn small" data-pact="load">טען</button>
+        <button class="del" data-pact="del" aria-label="מחק">✕</button></div>`).join('')
+      : `<p class="empty" style="padding:20px">אין תבניות עדיין</p>`}`);
+  $('#pSave').onclick = () => {
+    const name = prompt('שם התבנית:', list.name); if (!name?.trim()) return;
+    const ex = state.presets.find(p => p.name === name.trim());
+    if (ex){ if (!confirm('קיימת תבנית בשם הזה. להחליף?')) return; ex.items = stripItems(list.items); }
+    else state.presets.push({ id:uid(), name:name.trim(), items:stripItems(list.items) });
+    commit(); presetsSheet(); toast('התבנית נשמרה');
+  };
+  $('#sheet').querySelectorAll('[data-pact]').forEach(b => b.onclick = () => {
+    const p = state.presets.find(x => x.id === b.closest('.preset').dataset.id);
+    if (b.dataset.pact === 'del'){
+      if (!confirm(`למחוק את התבנית "${p.name}"?`)) return;
+      state.presets = state.presets.filter(x => x !== p); commit(); presetsSheet();
+    } else loadPreset(p);
+  });
+}
+function loadPreset(p){
+  const list = active();
+  if (!list.items.length){ mergeInto(list, p.items); closeSheet(); commit(); return toast(`נטענה "${p.name}"`); }
+  openSheet(`<h2>טעינת "${esc(p.name)}"</h2><div class="menu-list">
+    <button id="plMerge"><span>➕</span><span>הוסף לרשימה הנוכחית<small>פריטים קיימים לא יוכפלו</small></span></button>
+    <button id="plReplace"><span>🔄</span><span>החלף את הרשימה הנוכחית</span></button>
+    <button id="plNew"><span>📄</span><span>פתח כרשימה חדשה</span></button></div>`);
+  $('#plMerge').onclick = () => { const n = mergeInto(list, p.items); closeSheet(); commit(); toast(`נוספו ${n} פריטים`); };
+  $('#plReplace').onclick = () => { const before = list.items; list.items = []; mergeInto(list, p.items); closeSheet(); commit();
+    toast('הרשימה הוחלפה', 'בטל', () => { list.items = before; commit(); }); };
+  $('#plNew').onclick = () => { const id = uid(), nl = { id, name:p.name, items:[] }; mergeInto(nl, p.items);
+    state.lists.push(nl); state.activeListId = id; closeSheet(); commit(); };
+}
+
+/* ---------- export / import / share ---------- */
+const b64url = bytes => { let s=''; bytes.forEach(b => s += String.fromCharCode(b)); return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); };
+const unb64url = str => Uint8Array.from(atob(str.replace(/-/g,'+').replace(/_/g,'/')), c => c.charCodeAt(0));
+async function pipe(bytes, Stream){
+  return new Uint8Array(await new Response(new Blob([bytes]).stream().pipeThrough(new Stream('deflate-raw'))).arrayBuffer());
+}
+async function encodeShare(obj){
+  const raw = new TextEncoder().encode(JSON.stringify(obj));
+  if ('CompressionStream' in window){ try{ return 'z' + b64url(await pipe(raw, CompressionStream)); }catch(e){} }
+  return 'j' + b64url(raw);
+}
+async function decodeShare(code){
+  let bytes = unb64url(code.slice(1));
+  if (code[0] === 'z') bytes = await pipe(bytes, DecompressionStream);
+  return JSON.parse(new TextDecoder().decode(bytes));
+}
+const listPayload = l => ({ app:'lakachti', type:'list', version:1, name:l.name, items:stripItems(l.items) });
+const backupPayload = () => ({ app:'lakachti', type:'backup', version:1, exportedAt:new Date().toISOString(), lists:state.lists, presets:state.presets });
+const appUrl = () => location.href.split('#')[0];
+const listText = l => `🛒 ${l.name}\n` + l.items.filter(i=>!i.checked).map(i =>
+  `• ${i.name}${i.amount?` (${i.amount})`:''}${i.note?` – ${i.note}`:''}${i.link?` ${i.link}`:''}`).join('\n');
+
+function download(obj, filename){
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(obj, null, 2)], {type:'application/json'}));
+  a.download = filename; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+async function copy(text){
+  try{ await navigator.clipboard.writeText(text); toast('הועתק ✓'); }
+  catch(e){ prompt('העתיקו:', text); }
+}
+const safeName = s => s.replace(/[\\/:*?"<>|]+/g,'_');
+
+$('#menuBtn').onclick = () => {
+  const l = active();
+  openSheet(`<h2>שיתוף וגיבוי</h2>
+    <div class="section" style="margin-top:0">הרשימה "${esc(l.name)}"</div>
+    <div class="menu-list">
+      <button id="mLink"><span>🔗</span><span>שתף קישור<small>מי שפותח מקבל עותק של הרשימה</small></span></button>
+      <button id="mText"><span>💬</span><span>שתף כטקסט<small>לוואטסאפ, רק מה שעוד לא נלקח</small></span></button>
+      <button id="mFile"><span>📤</span><span>ייצוא לקובץ</span></button>
+    </div>
+    <div class="section">ייבוא</div>
+    <div class="menu-list">
+      <button id="mImport"><span>📥</span><span>ייבוא מקובץ<small>רשימה או גיבוי מלא</small></span></button>
+    </div>
+    <div class="section">כל הנתונים</div>
+    <div class="menu-list">
+      <button id="mBackup"><span>💾</span><span>גיבוי מלא לקובץ<small>כל הרשימות והתבניות</small></span></button>
+    </div>
+    <p class="hint">הנתונים נשמרים רק בדפדפן במכשיר הזה. מומלץ להוסיף את האפליקציה למסך הבית ולגבות מדי פעם.</p>`);
+  $('#mLink').onclick = async () => {
+    const payload = listPayload(l);
+    const hadPhotos = payload.items.some(i => i.image.startsWith('data:'));
+    payload.items.forEach(i => { if (i.image.startsWith('data:')) i.image = ''; }); // photos too big for a link
+    const url = appUrl() + '#import=' + await encodeShare(payload);
+    if (hadPhotos) toast('תמונות מהמצלמה לא נכללות בקישור — השתמשו ב"ייצוא לקובץ"');
+    if (navigator.share){ try{ await navigator.share({ title:l.name, text:`רשימת קניות: ${l.name}`, url }); return; }catch(e){ if (e.name==='AbortError') return; } }
+    copy(url);
+  };
+  $('#mText').onclick = async () => {
+    const text = listText(l);
+    if (navigator.share){ try{ await navigator.share({ text }); return; }catch(e){ if (e.name==='AbortError') return; } }
+    copy(text);
+  };
+  $('#mFile').onclick = async () => {
+    const obj = listPayload(l), name = `${safeName(l.name)}.json`;
+    const file = new File([JSON.stringify(obj, null, 2)], name, {type:'application/json'});
+    if (navigator.canShare?.({ files:[file] })){ try{ await navigator.share({ files:[file], title:l.name }); return; }catch(e){ if (e.name==='AbortError') return; } }
+    download(obj, name);
+  };
+  $('#mBackup').onclick = () => download(backupPayload(), `lakachti-backup-${new Date().toISOString().slice(0,10)}.json`);
+  $('#mImport').onclick = () => $('#fileInput').click();
+};
+
+$('#fileInput').onchange = async e => {
+  const f = e.target.files[0]; e.target.value = '';
+  if (!f) return;
+  try{ handleImport(JSON.parse(await f.text())); }
+  catch(err){ closeSheet(); toast('הקובץ לא תקין'); }
+};
+
+function validItems(items){
+  if (!Array.isArray(items)) throw 0;
+  return items.filter(i => i && typeof i.name === 'string' && i.name.trim())
+    .map(i => ({ name:i.name.trim().slice(0,200), amount:String(i.amount||'').slice(0,100), note:String(i.note||'').slice(0,500),
+      link:cleanLink(i.link), image:cleanImage(i.image) }));
+}
+function handleImport(obj){
+  if (!obj || obj.app !== 'lakachti') throw new Error('bad');
+  if (obj.type === 'backup'){
+    if (!Array.isArray(obj.lists)) throw new Error('bad');
+    openSheet(`<h2>שחזור גיבוי</h2>
+      <p>${obj.lists.length} רשימות, ${(obj.presets||[]).length} תבניות.</p><div class="menu-list">
+      <button id="bMerge"><span>➕</span><span>הוסף לנתונים הקיימים</span></button>
+      <button id="bReplace"><span>⚠️</span><span>החלף הכל<small>הנתונים הנוכחיים יימחקו</small></span></button></div>
+      <button class="btn ghost" data-close style="width:100%">ביטול</button>`);
+    const build = () => ({
+      lists: obj.lists.map(l => { const nl = { id:uid(), name:String(l.name||'רשימה'), items:[] }; mergeInto(nl, validItems(l.items));
+        (l.items||[]).forEach((src, k) => { const it = nl.items.find(x => x.name === String(src?.name||'').trim()); if (it && src.checked) it.checked = true; }); return nl; }),
+      presets: (obj.presets||[]).map(p => ({ id:uid(), name:String(p.name||'תבנית'), items:validItems(p.items) }))
+    });
+    $('#bMerge').onclick = () => { const b = build(); state.lists.push(...b.lists); state.presets.push(...b.presets); closeSheet(); commit(); toast('הגיבוי נוסף'); };
+    $('#bReplace').onclick = () => { if (!confirm('למחוק את כל הנתונים הנוכחיים ולהחליף בגיבוי?')) return;
+      const b = build(); if (!b.lists.length) b.lists = freshState().lists;
+      state = { version:1, activeListId:b.lists[0].id, lists:b.lists, presets:b.presets }; closeSheet(); commit(); toast('הגיבוי שוחזר'); };
+    return;
+  }
+  if (obj.type !== 'list') throw new Error('bad');
+  const items = validItems(obj.items), name = String(obj.name || 'רשימה משותפת').slice(0,60);
+  openSheet(`<h2>📥 התקבלה רשימה</h2>
+    <p><b>${esc(name)}</b> · ${items.length} פריטים</p>
+    <p class="hint">${items.slice(0,8).map(i => esc(i.name)).join(', ')}${items.length>8?'…':''}</p>
+    <div class="menu-list">
+      <button id="iNew"><span>📄</span><span>שמור כרשימה חדשה</span></button>
+      <button id="iMerge"><span>➕</span><span>הוסף לרשימה "${esc(active().name)}"</span></button>
+      <button id="iPreset"><span>⭐</span><span>שמור כתבנית</span></button></div>
+    <button class="btn ghost" data-close style="width:100%">ביטול</button>`);
+  $('#iNew').onclick = () => { const nl = { id:uid(), name, items:[] }; mergeInto(nl, items); state.lists.push(nl); state.activeListId = nl.id; closeSheet(); commit(); toast('הרשימה נשמרה'); };
+  $('#iMerge').onclick = () => { const n = mergeInto(active(), items); closeSheet(); commit(); toast(`נוספו ${n} פריטים`); };
+  $('#iPreset').onclick = () => { state.presets.push({ id:uid(), name, items }); closeSheet(); commit(); toast('נשמר כתבנית'); };
+}
+
+async function checkHashImport(){
+  const m = location.hash.match(/^#import=(.+)$/);
+  if (!m) return;
+  history.replaceState(null, '', location.pathname + location.search);
+  try{ handleImport(await decodeShare(m[1])); }
+  catch(e){ toast('הקישור לא תקין'); }
+}
+window.addEventListener('hashchange', checkHashImport);
+
+/* ---------- sheet + toast ---------- */
+function openSheet(html){ $('#sheet').innerHTML = html; $('#overlay').classList.add('open'); }
+function closeSheet(){ $('#overlay').classList.remove('open'); $('#sheet').innerHTML = ''; }
+$('#overlay').addEventListener('click', e => { if (e.target.id === 'overlay' || e.target.closest('[data-close]')) closeSheet(); });
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeSheet();
+  if (e.key === 'Enter' && e.target.matches('.sheet input')){ e.preventDefault(); $('#sheet .btn:not(.ghost)')?.click(); }
+});
+let toastTimer;
+function toast(msg, btn, fn){
+  $('#toastMsg').textContent = msg;
+  const b = $('#toastBtn'); b.textContent = btn || ''; b.hidden = !btn;
+  b.onclick = () => { fn?.(); $('#toast').classList.remove('show'); };
+  $('#toast').classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => $('#toast').classList.remove('show'), btn ? 5000 : 2200);
+}
+
+/* sync between tabs */
+window.addEventListener('storage', e => { if (e.key === KEY){ state = load(); render(); } });
+
+render();
+checkHashImport();
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>
