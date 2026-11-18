@@ -65,7 +65,11 @@ main{flex:1;padding:12px 12px 100px}
 .status-row select{width:auto;max-width:55%;padding:5px 8px;font-size:13px;border-radius:4px;background:var(--card)}
 .bar{height:6px;background:var(--bar);border-radius:3px;margin-top:8px;overflow:hidden}
 .bar i{display:block;height:100%;background:var(--accent);border-radius:3px;transition:width .25s}
-.clear{color:var(--accent);font-size:13px;padding:6px 0 0}
+.actions{display:flex;justify-content:space-between;align-items:center;gap:10px;padding-top:8px}
+.actions[hidden]{display:none}
+.clear{color:var(--accent);font-size:13px;font-weight:600;padding:4px 0;display:inline-flex;align-items:center;gap:4px}
+.clear .ic{width:16px;height:16px}
+.clear.muted{color:var(--muted);font-weight:400}
 
 ul{list-style:none;margin:0;padding:0}
 .item{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);
@@ -152,7 +156,10 @@ textarea{min-height:70px;resize:vertical}
       <select id="presetSelect" aria-label="טעינת תבנית"></select>
     </div>
     <div class="bar"><i id="barFill" style="width:0"></i></div>
-    <button class="clear" id="clearDone" hidden>נקה פריטים שנלקחו</button>
+    <div class="actions" id="doneActions" hidden>
+      <button class="clear" id="resetChecks"></button>
+      <button class="clear muted" id="clearDone">מחק פריטים שנלקחו</button>
+    </div>
   </div>
   <ul id="list"></ul>
 </main>
@@ -260,7 +267,8 @@ function render(){
   const total = list.items.length;
   $('#stats').textContent = total ? `מוכנות: ${done.length}/${total}` : 'מוכנות: —';
   $('#barFill').style.width = total ? `${Math.round(done.length / total * 100)}%` : '0';
-  $('#clearDone').hidden = !done.length;
+  $('#doneActions').hidden = !done.length;
+  $('#resetChecks').innerHTML = `${ic('undo')} אפס סימונים (${done.length})`;
 
   if (!total){
     $('#list').innerHTML = `<li class="empty">${ic('clipboard')}<div>הרשימה ריקה.</div><div>הוסיפו ציוד למטה או טענו תבנית.</div></li>`;
@@ -359,10 +367,16 @@ $('#list').addEventListener('click', e => {
   }
 });
 
+$('#resetChecks').onclick = () => {
+  const list = active(), was = list.items.filter(i => i.checked);
+  was.forEach(i => i.checked = false); commit();
+  toast(`${was.length} פריטים סומנו כחסרים`, 'בטל', () => { was.forEach(i => i.checked = true); commit(); });
+};
+
 $('#clearDone').onclick = () => {
   const list = active(), before = list.items.slice();
   list.items = list.items.filter(i => !i.checked); commit();
-  toast('נוקו פריטים שנלקחו', 'בטל', () => { list.items = before; commit(); });
+  toast('נמחקו פריטים שנלקחו', 'בטל', () => { list.items = before; commit(); });
 };
 
 function editItem(item){
