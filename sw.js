@@ -1,5 +1,5 @@
 // Offline cache. Network-first so updates show up right away; cache used when offline.
-const CACHE = 'lakachti-v1';
+const CACHE = 'lakachti-v2';
 const ASSETS = ['./', './index.html', './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {

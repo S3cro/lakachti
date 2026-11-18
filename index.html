@@ -4,78 +4,106 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>לקחתי\שכחתי?</title>
-<meta name="theme-color" content="#2e7d32">
+<meta name="theme-color" content="#1d3557">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="לקחתי?">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon-192.png">
 <style>
 :root{
-  --bg:#f4f6f3; --card:#fff; --text:#1d241e; --muted:#6b756c; --line:#e2e7e1;
-  --accent:#2e7d32; --accent-soft:#e3f1e4; --danger:#c62828; --shadow:0 1px 3px rgba(0,0,0,.08);
+  --bg:#e6ebf1; --card:#f7f9fc; --card-done:#edf1f6; --text:#14202e; --muted:#5b6b7d; --line:#c9d3df;
+  --head:#1d3557; --head-text:#eef3f9; --head-muted:#a9bdd6; --head-line:#3d5a80;
+  --accent:#2f6fb0; --sky:#8ecae6; --on-sky:#0b2540;
+  --danger:#b3261e; --miss:#c0392b; --miss-bg:#f6dcd9; --miss-text:#7a1f17;
+  --ok-bg:#d6e6f5; --ok-text:#123a63; --bar:#c9d3df; --toast:#1d3557;
+  color-scheme:light;
 }
 @media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){ --bg:#121512; --card:#1c211d; --text:#e8ece8; --muted:#9aa59b; --line:#2c332d;
-    --accent:#66bb6a; --accent-soft:#1f3321; --danger:#ef5350; --shadow:none; color-scheme:dark; }
+  :root:not([data-theme="light"]){
+    --bg:#0c131c; --card:#151f2b; --card-done:#111923; --text:#e3eaf2; --muted:#8fa1b5; --line:#263446;
+    --head:#0a1018; --head-text:#e3eaf2; --head-muted:#8fa1b5; --head-line:#263446;
+    --accent:#5fa3e0; --sky:#8ecae6; --on-sky:#0b2540;
+    --danger:#ef6b62; --miss:#e0675c; --miss-bg:#3a1d1b; --miss-text:#f2b8b2;
+    --ok-bg:#16304a; --ok-text:#b9d7f2; --bar:#263446; --toast:#22344c; color-scheme:dark;
+  }
 }
-:root[data-theme="dark"]{ --bg:#121512; --card:#1c211d; --text:#e8ece8; --muted:#9aa59b; --line:#2c332d;
-  --accent:#66bb6a; --accent-soft:#1f3321; --danger:#ef5350; --shadow:none; color-scheme:dark; }
-:root[data-theme="light"]{ color-scheme:light; }
+:root[data-theme="dark"]{
+  --bg:#0c131c; --card:#151f2b; --card-done:#111923; --text:#e3eaf2; --muted:#8fa1b5; --line:#263446;
+  --head:#0a1018; --head-text:#e3eaf2; --head-muted:#8fa1b5; --head-line:#263446;
+  --accent:#5fa3e0; --sky:#8ecae6; --on-sky:#0b2540;
+  --danger:#ef6b62; --miss:#e0675c; --miss-bg:#3a1d1b; --miss-text:#f2b8b2;
+  --ok-bg:#16304a; --ok-text:#b9d7f2; --bar:#263446; --toast:#22344c; color-scheme:dark;
+}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%}
 body{background:var(--bg);color:var(--text);font:16px/1.4 system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
   display:flex;flex-direction:column;min-height:100dvh}
 button,input,textarea,select{font:inherit;color:inherit}
 button{cursor:pointer;border:0;background:none}
-header{position:sticky;top:0;z-index:5;background:var(--bg);padding:calc(env(safe-area-inset-top) + 10px) 16px 8px;
-  border-bottom:1px solid var(--line)}
-.top{display:flex;align-items:center;gap:8px}
-h1{font-size:19px;margin:0;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.presetbar{display:flex;gap:8px;align-items:center;padding-top:8px}
-.presetbar select{flex:1;min-width:0;padding:8px 10px;font-size:14px}
-.thumb{flex:none;width:44px;height:44px;border-radius:10px;object-fit:cover;background:var(--line)}
-.link{color:var(--accent);text-decoration:none;font-size:13px;display:inline-block;margin-inline-start:6px}
-.imgprev{display:flex;gap:10px;align-items:center;margin-top:6px}
-.imgprev img{width:72px;height:72px;border-radius:10px;object-fit:cover}
-.viewer{max-width:100%;max-height:70dvh;display:block;margin:0 auto 12px;border-radius:12px}
-h1 span{color:var(--accent)}
-.icon-btn{flex:none;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-size:20px;background:var(--card);box-shadow:var(--shadow)}
-.tabs{display:flex;gap:6px;overflow-x:auto;padding:10px 0 2px;scrollbar-width:none}
+.ic{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none;vertical-align:middle}
+
+header{position:sticky;top:0;z-index:5;background:var(--head);color:var(--head-text);
+  padding:calc(env(safe-area-inset-top) + 12px) 16px 10px}
+.top{display:flex;align-items:center;gap:6px}
+.titles{flex:1;min-width:0}
+h1{font-size:19px;margin:0;font-weight:700;letter-spacing:.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+h1 span{color:var(--sky)}
+.hello{font-size:12px;color:var(--head-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hbtn{flex:none;width:34px;height:34px;border:1px solid var(--head-line);border-radius:6px;display:grid;place-items:center;color:var(--head-text)}
+.hbtn .ic{width:18px;height:18px}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-top:12px;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
-.tab{flex:none;padding:6px 14px;border-radius:999px;background:var(--card);box-shadow:var(--shadow);font-size:14px;white-space:nowrap}
-.tab.active{background:var(--accent);color:#fff}
-.tab.add{color:var(--accent);font-weight:700}
-.stats{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted);padding-top:6px}
-.stats button{color:var(--accent);font-size:13px;padding:4px 0}
-main{flex:1;padding:12px 16px 110px}
+.tab{flex:none;padding:5px 11px;border-radius:4px;border:1px solid var(--head-line);font-size:13px;white-space:nowrap;color:var(--head-text)}
+.tab.active{background:var(--sky);border-color:var(--sky);color:var(--on-sky);font-weight:600}
+.tab.add{border-style:dashed;color:var(--head-muted)}
+
+main{flex:1;padding:12px 12px 100px}
+.status{padding:2px 4px 10px}
+.status-row{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;color:var(--muted)}
+.status-row select{width:auto;max-width:55%;padding:5px 8px;font-size:13px;border-radius:4px;background:var(--card)}
+.bar{height:6px;background:var(--bar);border-radius:3px;margin-top:8px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:3px;transition:width .25s}
+.clear{color:var(--accent);font-size:13px;padding:6px 0 0}
+
 ul{list-style:none;margin:0;padding:0}
-.item{display:flex;align-items:center;gap:10px;background:var(--card);border-radius:14px;padding:10px 12px;margin-bottom:8px;box-shadow:var(--shadow)}
-.check{flex:none;width:28px;height:28px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;color:#fff;font-size:16px}
-.item.done .check{background:var(--accent);border-color:var(--accent)}
+.item{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);
+  border-inline-start:4px solid var(--miss);padding:9px 10px;margin-bottom:6px}
+.check{flex:none;width:26px;height:26px;border:2px solid var(--accent);border-radius:4px;display:grid;place-items:center;color:#fff}
+.check .ic{width:16px;height:16px;stroke-width:3}
+.item.done{background:var(--card-done);border-inline-start-color:var(--accent)}
+.item.done .check{background:var(--accent)}
 .body{flex:1;min-width:0}
 .name{font-weight:600;overflow-wrap:anywhere}
 .meta{font-size:13px;color:var(--muted);overflow-wrap:anywhere}
-.amt{display:inline-block;background:var(--accent-soft);color:var(--accent);border-radius:6px;padding:0 6px;margin-inline-end:6px;font-weight:600}
-.item.done .name{text-decoration:line-through;color:var(--muted)}
-.item.done{opacity:.7}
-.del{flex:none;width:34px;height:34px;border-radius:10px;color:var(--muted);font-size:18px}
-.section{font-size:13px;color:var(--muted);margin:16px 4px 8px}
-.empty{text-align:center;color:var(--muted);padding:50px 20px}
-.empty b{display:block;font-size:40px;margin-bottom:8px}
-.addbar{position:fixed;inset-inline:0;bottom:0;z-index:6;background:var(--bg);border-top:1px solid var(--line);
-  padding:10px 16px calc(env(safe-area-inset-bottom) + 10px);display:flex;gap:8px}
-.addbar input{flex:1;min-width:0}
-input[type=text],input[type=url],input:not([type]),textarea,select{width:100%;padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--card);outline:none}
-input:focus,textarea:focus{border-color:var(--accent)}
-.btn{padding:12px 16px;border-radius:12px;background:var(--accent);color:#fff;font-weight:600;white-space:nowrap}
+.amt{font-weight:600;color:var(--text);margin-inline-end:4px}
+.item.done .name{text-decoration:line-through;color:var(--muted);font-weight:400}
+.tag{flex:none;font-size:11px;padding:2px 6px;border-radius:3px;background:var(--miss-bg);color:var(--miss-text);font-weight:600}
+.item.done .tag{background:var(--ok-bg);color:var(--ok-text)}
+.thumb{flex:none;width:38px;height:38px;border-radius:4px;object-fit:cover;background:var(--line)}
+.link{color:var(--accent);text-decoration:none;display:inline-flex;align-items:center;gap:2px;margin-inline-start:6px}
+.link .ic{width:14px;height:14px}
+.del{flex:none;width:30px;height:30px;color:var(--muted);display:grid;place-items:center}
+.del .ic{width:16px;height:16px}
+.section{font-size:12px;color:var(--muted);margin:16px 4px 8px;font-weight:600;letter-spacing:.3px}
+.empty{text-align:center;color:var(--muted);padding:56px 20px}
+.empty .ic{width:44px;height:44px;stroke-width:1.5;color:var(--accent);margin-bottom:10px}
+
+.addbar{position:fixed;inset-inline:0;bottom:0;z-index:6;background:var(--head);
+  padding:10px 12px calc(env(safe-area-inset-bottom) + 10px);display:flex;gap:8px}
+.addbar input{flex:1;min-width:0;border-radius:4px;border-color:transparent}
+.addbar .btn{background:var(--sky);color:var(--on-sky);border-radius:4px}
+input[type=text],input[type=url],input:not([type]),textarea,select{width:100%;padding:11px 12px;border-radius:6px;border:1px solid var(--line);background:var(--card);outline:none}
+input:focus,textarea:focus,select:focus{border-color:var(--accent)}
+.btn{padding:11px 16px;border-radius:6px;background:var(--accent);color:#fff;font-weight:600;white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;gap:6px}
 .btn.ghost{background:var(--card);color:var(--text);border:1px solid var(--line)}
-.btn.danger{background:var(--danger)}
-.btn.small{padding:8px 12px;font-size:14px}
-/* sheet */
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:20;display:none;align-items:flex-end;justify-content:center}
+.btn.small{padding:7px 12px;font-size:14px}
+.btn[disabled]{opacity:.5}
+
+.overlay{position:fixed;inset:0;background:rgba(5,12,22,.5);z-index:20;display:none;align-items:flex-end;justify-content:center}
 .overlay.open{display:flex}
-.sheet{background:var(--bg);width:100%;max-width:560px;max-height:88dvh;overflow:auto;border-radius:20px 20px 0 0;
+.sheet{background:var(--bg);width:100%;max-width:560px;max-height:88dvh;overflow:auto;border-radius:14px 14px 0 0;
   padding:18px 16px calc(env(safe-area-inset-bottom) + 18px);animation:up .18s ease-out}
 @keyframes up{from{transform:translateY(40px);opacity:.5}}
 .sheet h2{margin:0 0 12px;font-size:18px}
@@ -83,40 +111,54 @@ input:focus,textarea:focus{border-color:var(--accent)}
 .field label{display:block;font-size:13px;color:var(--muted);margin-bottom:4px}
 .row{display:flex;gap:8px;flex-wrap:wrap}
 .row>.btn{flex:1}
-.menu-list button{display:flex;align-items:center;gap:12px;width:100%;text-align:start;padding:14px 12px;background:var(--card);border-radius:12px;margin-bottom:8px;box-shadow:var(--shadow)}
-.menu-list button span:first-child{font-size:20px;width:26px;text-align:center}
+.menu-list button{display:flex;align-items:center;gap:12px;width:100%;text-align:start;padding:12px;background:var(--card);border:1px solid var(--line);border-radius:6px;margin-bottom:6px}
+.menu-list button>.ic{color:var(--accent)}
 .menu-list small{display:block;color:var(--muted);font-size:12px}
-.preset{display:flex;align-items:center;gap:8px;background:var(--card);border-radius:12px;padding:10px 12px;margin-bottom:8px;box-shadow:var(--shadow)}
-.preset .body small{color:var(--muted)}
-.toast{position:fixed;bottom:calc(env(safe-area-inset-bottom) + 84px);inset-inline:16px;margin:auto;max-width:420px;z-index:30;
-  background:#263238;color:#fff;border-radius:12px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px;
+.preset{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;margin-bottom:6px}
+.preset small{color:var(--muted)}
+.imgprev{display:flex;gap:10px;align-items:center;margin-top:6px}
+.imgprev img{width:72px;height:72px;border-radius:6px;object-fit:cover}
+.viewer{max-width:100%;max-height:70dvh;display:block;margin:0 auto 12px;border-radius:6px}
+.toast{position:fixed;bottom:calc(env(safe-area-inset-bottom) + 80px);inset-inline:16px;margin:auto;max-width:420px;z-index:30;
+  background:var(--toast);color:#fff;border-radius:6px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px;
   transform:translateY(20px);opacity:0;pointer-events:none;transition:.2s}
 .toast.show{transform:none;opacity:1;pointer-events:auto}
-.toast button{color:#a5d6a7;font-weight:700}
+.toast button{color:var(--sky);font-weight:700}
 textarea{min-height:70px;resize:vertical}
 .hint{font-size:12px;color:var(--muted);margin:6px 0 12px}
+.welcome{text-align:center;padding:8px 0 4px}
+.welcome .ic{width:48px;height:48px;stroke-width:1.5;color:var(--accent)}
 </style>
 </head>
 <body>
 <header>
   <div class="top">
-    <h1>לקחתי<span>\</span>שכחתי?</h1>
-    <button class="icon-btn" id="refreshBtn" aria-label="רענון">🔄</button>
-    <button class="icon-btn" id="themeBtn" aria-label="מצב תצוגה">🌓</button>
-    <button class="icon-btn" id="presetsBtn" aria-label="ניהול תבניות">⭐</button>
-    <button class="icon-btn" id="menuBtn" aria-label="שיתוף וגיבוי">⋯</button>
+    <div class="titles">
+      <h1>לקחתי<span>\</span>שכחתי?</h1>
+      <div class="hello" id="hello"></div>
+    </div>
+    <button class="hbtn" id="refreshBtn" aria-label="רענון"></button>
+    <button class="hbtn" id="themeBtn" aria-label="מצב תצוגה"></button>
+    <button class="hbtn" id="presetsBtn" aria-label="ניהול תבניות"></button>
+    <button class="hbtn" id="menuBtn" aria-label="שיתוף, גיבוי והגדרות"></button>
   </div>
   <nav class="tabs" id="tabs"></nav>
-  <div class="presetbar">
-    <select id="presetSelect" aria-label="טעינת תבנית"></select>
-  </div>
-  <div class="stats"><span id="stats"></span><button id="clearDone" hidden>נקה מה שלקחתי</button></div>
 </header>
 
-<main><ul id="list"></ul></main>
+<main>
+  <div class="status">
+    <div class="status-row">
+      <span id="stats"></span>
+      <select id="presetSelect" aria-label="טעינת תבנית"></select>
+    </div>
+    <div class="bar"><i id="barFill" style="width:0"></i></div>
+    <button class="clear" id="clearDone" hidden>נקה פריטים שנלקחו</button>
+  </div>
+  <ul id="list"></ul>
+</main>
 
 <form class="addbar" id="addForm" autocomplete="off">
-  <input id="addInput" placeholder="מה צריך לקנות?" enterkeyhint="done" aria-label="פריט חדש">
+  <input id="addInput" placeholder="מה צריך לקחת?" enterkeyhint="done" aria-label="פריט חדש">
   <button class="btn" type="submit">הוסף</button>
 </form>
 
@@ -126,58 +168,115 @@ textarea{min-height:70px;resize:vertical}
 
 <script>
 'use strict';
-const KEY = 'lakachti.v1';
+const KEY = 'lakachti.v1', NAME_KEY = 'lakachti.name', THEME_KEY = 'lakachti.theme';
 const $ = s => document.querySelector(s);
 const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const lsGet = k => { try{ return localStorage.getItem(k); }catch(e){ return null; } };
+const lsSet = (k, v) => { try{ localStorage.setItem(k, v); return true; }catch(e){ return false; } };
+
+/* ---------- icons (outline SVG) ---------- */
+const P = {
+  refresh:'<path d="M20 11A8.1 8.1 0 0 0 4.5 9M4 5v4h4"/><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"/>',
+  sun:'<circle cx="12" cy="12" r="4"/><path d="M3 12h1m8-9v1m8 8h1m-9 8v1M5.6 5.6l.7.7m12.1-.7-.7.7m0 11.4.7.7m-12.1-.7-.7.7"/>',
+  moon:'<path d="M12 3h.393a7.5 7.5 0 0 0 7.92 12.446A9 9 0 1 1 12 2.992z"/>',
+  auto:'<circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/>',
+  dots:'<circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/>',
+  bookmark:'<path d="M18 7v14l-6-4-6 4V7a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4z"/>',
+  x:'<path d="M18 6 6 18M6 6l12 12"/>',
+  check:'<path d="m5 12 5 5L20 7"/>',
+  link:'<path d="M9 15l6-6"/><path d="M11 6l.463-.536a5 5 0 0 1 7.071 7.072L18 13"/><path d="M13 18l-.397.534a5.068 5.068 0 0 1-7.127 0 4.972 4.972 0 0 1 0-7.071L6 11"/>',
+  camera:'<path d="M5 7h1a2 2 0 0 0 2-2 1 1 0 0 1 1-1h6a1 1 0 0 1 1 1 2 2 0 0 0 2 2h1a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2"/><circle cx="12" cy="13" r="3"/>',
+  world:'<circle cx="12" cy="12" r="9"/><path d="M3.6 9h16.8M3.6 15h16.8M11.5 3a17 17 0 0 0 0 18M12.5 3a17 17 0 0 1 0 18"/>',
+  share:'<circle cx="6" cy="12" r="3"/><circle cx="18" cy="6" r="3"/><circle cx="18" cy="18" r="3"/><path d="m8.7 10.7 6.6-3.4M8.7 13.3l6.6 3.4"/>',
+  message:'<path d="M8 9h8M8 13h6"/><path d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3h-5l-5 3v-3H6a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3z"/>',
+  upload:'<path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2M7 9l5-5 5 5M12 4v12"/>',
+  download:'<path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2M7 11l5 5 5-5M12 4v12"/>',
+  db:'<ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.657 3.582 3 8 3s8-1.343 8-3V6"/><path d="M4 12v6c0 1.657 3.582 3 8 3s8-1.343 8-3v-6"/>',
+  edit:'<path d="M4 20h4L18.5 9.5a2.828 2.828 0 1 0-4-4L4 16v4"/><path d="m13.5 6.5 4 4"/>',
+  undo:'<path d="M9 14 5 10l4-4"/><path d="M5 10h11a4 4 0 1 1 0 8h-1"/>',
+  trash:'<path d="M4 7h16M10 11v6M14 11v6M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2l1-12M9 7V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  fileplus:'<path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2zM12 11v6M9 14h6"/>',
+  alert:'<path d="M12 9v4M12 16h.01"/><path d="M10.363 3.591 2.257 17.125a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636-2.87L13.637 3.59a1.914 1.914 0 0 0-3.274 0z"/>',
+  user:'<circle cx="12" cy="7" r="4"/><path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/>',
+  plane:'<path d="M16 10h4a2 2 0 0 1 0 4h-4l-4 7H9l2-7H7l-2 2H2l2-4-2-4h3l2 2h4L9 3h3z"/>',
+  clipboard:'<path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="m9 14 2 2 4-4"/>'
+};
+const ic = n => `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${P[n]}</svg>`;
+$('#refreshBtn').innerHTML = ic('refresh');
+$('#presetsBtn').innerHTML = ic('bookmark');
+$('#menuBtn').innerHTML = ic('dots');
 
 /* ---------- state ---------- */
+const DEFAULT_LIST = 'משימה';
 function freshState(){
   const id = uid();
-  return { version:1, activeListId:id, lists:[{ id, name:'הסופר', items:[] }], presets:[] };
+  return { version:1, activeListId:id, lists:[{ id, name:DEFAULT_LIST, items:[] }], presets:[] };
 }
 function load(){
   try{
-    const s = JSON.parse(localStorage.getItem(KEY));
+    const s = JSON.parse(lsGet(KEY));
     if (s && Array.isArray(s.lists) && s.lists.length) { s.presets ||= []; return s; }
   }catch(e){}
   return freshState();
 }
 let state = load();
-function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){ toast('שגיאה בשמירה'); } }
+function save(){ if (!lsSet(KEY, JSON.stringify(state))) toast('שגיאה בשמירה — אין מספיק מקום'); }
 const active = () => state.lists.find(l => l.id === state.activeListId) || state.lists[0];
 if (navigator.storage?.persist) navigator.storage.persist().catch(()=>{});
+
+/* ---------- user name ---------- */
+let userName = lsGet(NAME_KEY) || '';
+function renderHello(){ $('#hello').textContent = userName ? `שלום, ${userName}` : ''; }
+function askName(first, then){
+  openSheet(`<div class="welcome">${ic(first ? 'plane' : 'user')}</div>
+    <h2 style="text-align:center">${first ? 'ברוכים הבאים' : 'שינוי שם'}</h2>
+    <p class="hint" style="text-align:center">${first ? 'רשימת ציוד שנשמרת רק בטלפון שלך. איך קוראים לך?' : 'השם מוצג רק במכשיר הזה.'}</p>
+    <div class="field"><input id="nName" value="${esc(userName)}" placeholder="השם שלך" maxlength="30" autocomplete="given-name"></div>
+    <div class="row"><button class="btn" id="nSave">${first ? 'יאללה' : 'שמור'}</button>${first ? '' : '<button class="btn ghost" data-close>ביטול</button>'}</div>`, then);
+  setTimeout(() => $('#nName')?.focus(), 50);
+  $('#nSave').onclick = () => {
+    const n = $('#nName').value.trim();
+    if (!n){ $('#nName').focus(); return; }
+    userName = n; lsSet(NAME_KEY, n); renderHello(); closeSheet();
+  };
+}
 
 /* ---------- render ---------- */
 function render(){
   const list = active();
   state.activeListId = list.id;
-  $('#tabs').innerHTML = state.lists.map(l =>
-    `<button class="tab ${l.id===list.id?'active':''}" data-id="${l.id}">${esc(l.name)}${l.items.some(i=>!i.checked)?` · ${l.items.filter(i=>!i.checked).length}`:''}</button>`
-  ).join('') + `<button class="tab add" id="newListTab">＋ רשימה</button>`;
+  $('#tabs').innerHTML = state.lists.map(l => {
+    const left = l.items.filter(i => !i.checked).length;
+    return `<button class="tab ${l.id===list.id?'active':''}" data-id="${l.id}">${esc(l.name)}${left?` · ${left}`:''}</button>`;
+  }).join('') + `<button class="tab add" id="newListTab">+ רשימה</button>`;
 
-  $('#presetSelect').innerHTML = `<option value="">⭐ ${state.presets.length ? 'טען תבנית…' : 'אין תבניות (שמרו דרך ⭐)'}</option>` +
+  $('#presetSelect').innerHTML = `<option value="">${state.presets.length ? 'טען תבנית…' : 'אין תבניות'}</option>` +
     state.presets.map(p => `<option value="${p.id}">${esc(p.name)} (${p.items.length})</option>`).join('');
   $('#presetSelect').disabled = !state.presets.length;
 
   const todo = list.items.filter(i => !i.checked), done = list.items.filter(i => i.checked);
-  $('#stats').textContent = list.items.length ? `נשארו ${todo.length} מתוך ${list.items.length}` : '';
+  const total = list.items.length;
+  $('#stats').textContent = total ? `מוכנות: ${done.length}/${total}` : 'מוכנות: —';
+  $('#barFill').style.width = total ? `${Math.round(done.length / total * 100)}%` : '0';
   $('#clearDone').hidden = !done.length;
 
-  if (!list.items.length){
-    $('#list').innerHTML = `<li class="empty"><b>🛒</b>הרשימה ריקה.<br>הוסיפו פריט למטה או טענו תבנית ⭐</li>`;
+  if (!total){
+    $('#list').innerHTML = `<li class="empty">${ic('clipboard')}<div>הרשימה ריקה.</div><div>הוסיפו ציוד למטה או טענו תבנית.</div></li>`;
     return;
   }
   const row = i => `<li class="item ${i.checked?'done':''}" data-id="${i.id}">
-      <button class="check" data-act="toggle" aria-label="סמן">${i.checked?'✓':''}</button>
+      <button class="check" data-act="toggle" aria-label="${i.checked?'בטל סימון':'סמן שנלקח'}">${i.checked?ic('check'):''}</button>
       ${i.image?`<img class="thumb" src="${esc(i.image)}" alt="" data-act="img" loading="lazy">`:''}
       <div class="body" data-act="edit">
         <div class="name">${esc(i.name)}</div>
-        ${(i.amount||i.note||i.link)?`<div class="meta">${i.amount?`<span class="amt">${esc(i.amount)}</span>`:''}${esc(i.note)}${i.link?`<a class="link" href="${esc(i.link)}" target="_blank" rel="noopener noreferrer">🔗 ${esc(linkLabel(i.link))}</a>`:''}</div>`:''}
+        ${(i.amount||i.note||i.link)?`<div class="meta">${i.amount?`<span class="amt">x${esc(i.amount)}</span>`:''}${i.amount&&i.note?' · ':''}${esc(i.note)}${i.link?`<a class="link" href="${esc(i.link)}" target="_blank" rel="noopener noreferrer">${ic('link')}${esc(linkLabel(i.link))}</a>`:''}</div>`:''}
       </div>
-      <button class="del" data-act="del" aria-label="מחק">✕</button></li>`;
+      <span class="tag">${i.checked?'נלקח':'חסר'}</span>
+      <button class="del" data-act="del" aria-label="מחק">${ic('x')}</button></li>`;
   $('#list').innerHTML = todo.map(row).join('') +
-    (done.length ? `<li class="section">לקחתי ✓</li>` + done.map(row).join('') : '');
+    (done.length ? `<li class="section">נלקח</li>` + done.map(row).join('') : '');
 }
 const commit = () => { save(); render(); };
 const linkLabel = u => { try{ return new URL(u).hostname.replace(/^www\./,''); }catch(e){ return 'קישור'; } };
@@ -201,21 +300,20 @@ function resizeImage(file, max = 480){
 }
 
 /* ---------- theme ---------- */
-const THEME_KEY = 'lakachti.theme', themes = ['auto','light','dark'], themeIcon = { auto:'🌓', light:'☀️', dark:'🌙' },
+const themes = ['auto','light','dark'], themeIcon = { auto:'auto', light:'sun', dark:'moon' },
   themeName = { auto:'לפי המכשיר', light:'בהיר', dark:'כהה' };
 function applyTheme(t){
   if (t === 'auto') document.documentElement.removeAttribute('data-theme');
   else document.documentElement.setAttribute('data-theme', t);
-  $('#themeBtn').textContent = themeIcon[t];
+  $('#themeBtn').innerHTML = ic(themeIcon[t]);
   const dark = t === 'dark' || (t === 'auto' && matchMedia('(prefers-color-scheme: dark)').matches);
-  document.querySelector('meta[name=theme-color]').content = dark ? '#121512' : '#2e7d32';
+  document.querySelector('meta[name=theme-color]').content = dark ? '#0a1018' : '#1d3557';
 }
-let theme = (() => { try{ return localStorage.getItem(THEME_KEY) || 'auto'; }catch(e){ return 'auto'; } })();
+let theme = lsGet(THEME_KEY) || 'auto';
 applyTheme(theme);
 $('#themeBtn').onclick = () => {
   theme = themes[(themes.indexOf(theme)+1) % 3];
-  try{ localStorage.setItem(THEME_KEY, theme); }catch(e){}
-  applyTheme(theme); toast('תצוגה: ' + themeName[theme]);
+  lsSet(THEME_KEY, theme); applyTheme(theme); toast('תצוגה: ' + themeName[theme]);
 };
 matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', () => applyTheme(theme));
 
@@ -254,8 +352,11 @@ $('#list').addEventListener('click', e => {
     toast(`"${item.name}" נמחק`, 'בטל', () => { list.items.splice(idx, 0, item); commit(); });
   }
   if (act === 'edit' && !e.target.closest('a')) editItem(item);
-  if (act === 'img') openSheet(`<img class="viewer" src="${esc(item.image)}" alt=""><h2>${esc(item.name)}</h2>
-    <div class="row"><button class="btn" id="vEdit">עריכה</button><button class="btn ghost" data-close>סגור</button></div>`), $('#vEdit').onclick = () => editItem(item);
+  if (act === 'img'){
+    openSheet(`<img class="viewer" src="${esc(item.image)}" alt=""><h2>${esc(item.name)}</h2>
+      <div class="row"><button class="btn" id="vEdit">עריכה</button><button class="btn ghost" data-close>סגור</button></div>`);
+    $('#vEdit').onclick = () => editItem(item);
+  }
 });
 
 $('#clearDone').onclick = () => {
@@ -267,11 +368,11 @@ $('#clearDone').onclick = () => {
 function editItem(item){
   openSheet(`<h2>עריכת פריט</h2>
     <div class="field"><label>שם</label><input id="eName" value="${esc(item.name)}"></div>
-    <div class="field"><label>כמות</label><input id="eAmt" value="${esc(item.amount)}" placeholder="למשל: 2, 1 ק״ג, 3 חבילות"></div>
-    <div class="field"><label>הערה</label><textarea id="eNote" placeholder="למשל: רק של תנובה, 3%">${esc(item.note)}</textarea></div>
+    <div class="field"><label>כמות</label><input id="eAmt" value="${esc(item.amount)}" placeholder="למשל: 7, 2 זוגות"></div>
+    <div class="field"><label>הערה</label><textarea id="eNote" placeholder="למשל: עם 2 לוחות, לבדוק סוללה">${esc(item.note)}</textarea></div>
     <div class="field"><label>קישור</label><input id="eLink" type="url" inputmode="url" dir="ltr" value="${esc(item.link||'')}" placeholder="https://..."></div>
     <div class="field"><label>תמונה</label>
-      <div class="row"><button class="btn ghost small" id="eCam">📷 צלם / בחר</button><button class="btn ghost small" id="eImgUrl">🌐 מקישור</button></div>
+      <div class="row"><button class="btn ghost small" id="eCam">${ic('camera')} צלם / בחר</button><button class="btn ghost small" id="eImgUrl">${ic('world')} מקישור</button></div>
       <div class="imgprev" id="ePrev"></div>
       <input type="file" id="eFile" accept="image/*" hidden></div>
     <div class="row"><button class="btn" id="eSave">שמור</button><button class="btn ghost" data-close>ביטול</button></div>`);
@@ -294,8 +395,8 @@ function editItem(item){
     item.link = cleanLink(link);
     item.image = image;
     closeSheet();
-    try{ localStorage.setItem(KEY, JSON.stringify(state)); render(); }
-    catch(e){ Object.assign(item, old); render(); toast('אין מספיק מקום בזיכרון — נסו תמונה קטנה יותר או מחקו תמונות'); }
+    if (lsSet(KEY, JSON.stringify(state))) render();
+    else { Object.assign(item, old); render(); toast('אין מספיק מקום בזיכרון — נסו תמונה קטנה יותר או מחקו תמונות'); }
   };
 }
 
@@ -309,7 +410,7 @@ $('#tabs').addEventListener('click', e => {
 
 function listForm(list){
   openSheet(`<h2>${list?'שינוי שם רשימה':'רשימה חדשה'}</h2>
-    <div class="field"><input id="lName" value="${esc(list?.name||'')}" placeholder="למשל: בית מרקחת"></div>
+    <div class="field"><input id="lName" value="${esc(list?.name||'')}" placeholder="למשל: שמירה, אימון, יציאה הביתה"></div>
     <div class="row"><button class="btn" id="lSave">שמור</button><button class="btn ghost" data-close>ביטול</button></div>`);
   $('#lName').focus();
   $('#lSave').onclick = () => {
@@ -323,16 +424,16 @@ function listForm(list){
 function listMenu(){
   const list = active();
   openSheet(`<h2>${esc(list.name)}</h2><div class="menu-list">
-    <button id="lmRename"><span>✏️</span><span>שינוי שם</span></button>
-    <button id="lmUncheck"><span>↺</span><span>בטל סימון לכל הפריטים</span></button>
-    <button id="lmDelete"><span>🗑️</span><span>מחק רשימה</span></button></div>`);
+    <button id="lmRename">${ic('edit')}<span>שינוי שם</span></button>
+    <button id="lmUncheck">${ic('undo')}<span>סמן הכל כחסר<small>לתחילת משימה חדשה עם אותה רשימה</small></span></button>
+    <button id="lmDelete">${ic('trash')}<span>מחק רשימה</span></button></div>`);
   $('#lmRename').onclick = () => listForm(list);
   $('#lmUncheck').onclick = () => { list.items.forEach(i => i.checked = false); closeSheet(); commit(); };
   $('#lmDelete').onclick = () => {
     if (!confirm(`למחוק את "${list.name}"?`)) return;
     const idx = state.lists.indexOf(list);
     state.lists.splice(idx, 1);
-    if (!state.lists.length){ const id = uid(); state.lists.push({ id, name:'הסופר', items:[] }); }
+    if (!state.lists.length){ const id = uid(); state.lists.push({ id, name:DEFAULT_LIST, items:[] }); }
     state.activeListId = state.lists[Math.max(0, idx-1)].id;
     closeSheet(); commit();
     toast(`"${list.name}" נמחקה`, 'בטל', () => { state.lists.splice(idx, 0, list); state.activeListId = list.id; commit(); });
@@ -355,14 +456,14 @@ function mergeInto(list, items){
 $('#presetsBtn').onclick = presetsSheet;
 function presetsSheet(){
   const list = active();
-  openSheet(`<h2>⭐ תבניות</h2>
-    <p class="hint">תבנית = רשימה קבועה (למשל "קנייה שבועית") שאפשר לטעון בלחיצה.</p>
-    <button class="btn" id="pSave" style="width:100%;margin-bottom:14px" ${list.items.length?'':'disabled'}>שמור את "${esc(list.name)}" כתבנית</button>
+  openSheet(`<h2>תבניות</h2>
+    <p class="hint">תבנית = רשימת ציוד קבועה (למשל "יציאה לשטח") שאפשר לטעון בלחיצה מהתפריט הנפתח.</p>
+    <button class="btn" id="pSave" style="width:100%;margin-bottom:14px" ${list.items.length?'':'disabled'}>${ic('bookmark')} שמור את "${esc(list.name)}" כתבנית</button>
     ${state.presets.length ? state.presets.map(p => `<div class="preset" data-id="${p.id}">
         <div class="body"><div class="name">${esc(p.name)}</div><small>${p.items.length} פריטים</small></div>
         <button class="btn small" data-pact="load">טען</button>
-        <button class="del" data-pact="del" aria-label="מחק">✕</button></div>`).join('')
-      : `<p class="empty" style="padding:20px">אין תבניות עדיין</p>`}`);
+        <button class="del" data-pact="del" aria-label="מחק">${ic('x')}</button></div>`).join('')
+      : `<p class="hint" style="text-align:center;padding:16px">אין תבניות עדיין</p>`}`);
   $('#pSave').onclick = () => {
     const name = prompt('שם התבנית:', list.name); if (!name?.trim()) return;
     const ex = state.presets.find(p => p.name === name.trim());
@@ -382,9 +483,9 @@ function loadPreset(p){
   const list = active();
   if (!list.items.length){ mergeInto(list, p.items); closeSheet(); commit(); return toast(`נטענה "${p.name}"`); }
   openSheet(`<h2>טעינת "${esc(p.name)}"</h2><div class="menu-list">
-    <button id="plMerge"><span>➕</span><span>הוסף לרשימה הנוכחית<small>פריטים קיימים לא יוכפלו</small></span></button>
-    <button id="plReplace"><span>🔄</span><span>החלף את הרשימה הנוכחית</span></button>
-    <button id="plNew"><span>📄</span><span>פתח כרשימה חדשה</span></button></div>`);
+    <button id="plMerge">${ic('plus')}<span>הוסף לרשימה הנוכחית<small>פריטים קיימים לא יוכפלו</small></span></button>
+    <button id="plReplace">${ic('refresh')}<span>החלף את הרשימה הנוכחית</span></button>
+    <button id="plNew">${ic('fileplus')}<span>פתח כרשימה חדשה</span></button></div>`);
   $('#plMerge').onclick = () => { const n = mergeInto(list, p.items); closeSheet(); commit(); toast(`נוספו ${n} פריטים`); };
   $('#plReplace').onclick = () => { const before = list.items; list.items = []; mergeInto(list, p.items); closeSheet(); commit();
     toast('הרשימה הוחלפה', 'בטל', () => { list.items = before; commit(); }); };
@@ -411,8 +512,8 @@ async function decodeShare(code){
 const listPayload = l => ({ app:'lakachti', type:'list', version:1, name:l.name, items:stripItems(l.items) });
 const backupPayload = () => ({ app:'lakachti', type:'backup', version:1, exportedAt:new Date().toISOString(), lists:state.lists, presets:state.presets });
 const appUrl = () => location.href.split('#')[0];
-const listText = l => `🛒 ${l.name}\n` + l.items.filter(i=>!i.checked).map(i =>
-  `• ${i.name}${i.amount?` (${i.amount})`:''}${i.note?` – ${i.note}`:''}${i.link?` ${i.link}`:''}`).join('\n');
+const listText = l => `רשימת ציוד: ${l.name}\n` + l.items.filter(i=>!i.checked).map(i =>
+  `☐ ${i.name}${i.amount?` x${i.amount}`:''}${i.note?` – ${i.note}`:''}${i.link?` ${i.link}`:''}`).join('\n');
 
 function download(obj, filename){
   const a = document.createElement('a');
@@ -421,27 +522,28 @@ function download(obj, filename){
   setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 }
 async function copy(text){
-  try{ await navigator.clipboard.writeText(text); toast('הועתק ✓'); }
+  try{ await navigator.clipboard.writeText(text); toast('הועתק'); }
   catch(e){ prompt('העתיקו:', text); }
 }
 const safeName = s => s.replace(/[\\/:*?"<>|]+/g,'_');
 
 $('#menuBtn').onclick = () => {
   const l = active();
-  openSheet(`<h2>שיתוף וגיבוי</h2>
+  openSheet(`<h2>שיתוף, גיבוי והגדרות</h2>
     <div class="section" style="margin-top:0">הרשימה "${esc(l.name)}"</div>
     <div class="menu-list">
-      <button id="mLink"><span>🔗</span><span>שתף קישור<small>מי שפותח מקבל עותק של הרשימה</small></span></button>
-      <button id="mText"><span>💬</span><span>שתף כטקסט<small>לוואטסאפ, רק מה שעוד לא נלקח</small></span></button>
-      <button id="mFile"><span>📤</span><span>ייצוא לקובץ</span></button>
+      <button id="mLink">${ic('share')}<span>שתף קישור<small>מי שפותח מקבל עותק של הרשימה</small></span></button>
+      <button id="mText">${ic('message')}<span>שתף כטקסט<small>לוואטסאפ, רק מה שעוד חסר</small></span></button>
+      <button id="mFile">${ic('upload')}<span>ייצוא לקובץ</span></button>
     </div>
     <div class="section">ייבוא</div>
     <div class="menu-list">
-      <button id="mImport"><span>📥</span><span>ייבוא מקובץ<small>רשימה או גיבוי מלא</small></span></button>
+      <button id="mImport">${ic('download')}<span>ייבוא מקובץ<small>רשימה או גיבוי מלא</small></span></button>
     </div>
     <div class="section">כל הנתונים</div>
     <div class="menu-list">
-      <button id="mBackup"><span>💾</span><span>גיבוי מלא לקובץ<small>כל הרשימות והתבניות</small></span></button>
+      <button id="mBackup">${ic('db')}<span>גיבוי מלא לקובץ<small>כל הרשימות והתבניות</small></span></button>
+      <button id="mName">${ic('user')}<span>שינוי שם<small>${userName ? esc(userName) : 'לא הוגדר'}</small></span></button>
     </div>
     <p class="hint">הנתונים נשמרים רק בדפדפן במכשיר הזה. מומלץ להוסיף את האפליקציה למסך הבית ולגבות מדי פעם.</p>`);
   $('#mLink').onclick = async () => {
@@ -450,7 +552,7 @@ $('#menuBtn').onclick = () => {
     payload.items.forEach(i => { if (i.image.startsWith('data:')) i.image = ''; }); // photos too big for a link
     const url = appUrl() + '#import=' + await encodeShare(payload);
     if (hadPhotos) toast('תמונות מהמצלמה לא נכללות בקישור — השתמשו ב"ייצוא לקובץ"');
-    if (navigator.share){ try{ await navigator.share({ title:l.name, text:`רשימת קניות: ${l.name}`, url }); return; }catch(e){ if (e.name==='AbortError') return; } }
+    if (navigator.share){ try{ await navigator.share({ title:l.name, text:`רשימת ציוד: ${l.name}`, url }); return; }catch(e){ if (e.name==='AbortError') return; } }
     copy(url);
   };
   $('#mText').onclick = async () => {
@@ -466,6 +568,7 @@ $('#menuBtn').onclick = () => {
   };
   $('#mBackup').onclick = () => download(backupPayload(), `lakachti-backup-${new Date().toISOString().slice(0,10)}.json`);
   $('#mImport').onclick = () => $('#fileInput').click();
+  $('#mName').onclick = () => askName(false);
 };
 
 $('#fileInput').onchange = async e => {
@@ -487,12 +590,12 @@ function handleImport(obj){
     if (!Array.isArray(obj.lists)) throw new Error('bad');
     openSheet(`<h2>שחזור גיבוי</h2>
       <p>${obj.lists.length} רשימות, ${(obj.presets||[]).length} תבניות.</p><div class="menu-list">
-      <button id="bMerge"><span>➕</span><span>הוסף לנתונים הקיימים</span></button>
-      <button id="bReplace"><span>⚠️</span><span>החלף הכל<small>הנתונים הנוכחיים יימחקו</small></span></button></div>
+      <button id="bMerge">${ic('plus')}<span>הוסף לנתונים הקיימים</span></button>
+      <button id="bReplace">${ic('alert')}<span>החלף הכל<small>הנתונים הנוכחיים יימחקו</small></span></button></div>
       <button class="btn ghost" data-close style="width:100%">ביטול</button>`);
     const build = () => ({
       lists: obj.lists.map(l => { const nl = { id:uid(), name:String(l.name||'רשימה'), items:[] }; mergeInto(nl, validItems(l.items));
-        (l.items||[]).forEach((src, k) => { const it = nl.items.find(x => x.name === String(src?.name||'').trim()); if (it && src.checked) it.checked = true; }); return nl; }),
+        (l.items||[]).forEach(src => { const it = nl.items.find(x => x.name === String(src?.name||'').trim()); if (it && src.checked) it.checked = true; }); return nl; }),
       presets: (obj.presets||[]).map(p => ({ id:uid(), name:String(p.name||'תבנית'), items:validItems(p.items) }))
     });
     $('#bMerge').onclick = () => { const b = build(); state.lists.push(...b.lists); state.presets.push(...b.presets); closeSheet(); commit(); toast('הגיבוי נוסף'); };
@@ -503,13 +606,13 @@ function handleImport(obj){
   }
   if (obj.type !== 'list') throw new Error('bad');
   const items = validItems(obj.items), name = String(obj.name || 'רשימה משותפת').slice(0,60);
-  openSheet(`<h2>📥 התקבלה רשימה</h2>
+  openSheet(`<h2>התקבלה רשימה</h2>
     <p><b>${esc(name)}</b> · ${items.length} פריטים</p>
     <p class="hint">${items.slice(0,8).map(i => esc(i.name)).join(', ')}${items.length>8?'…':''}</p>
     <div class="menu-list">
-      <button id="iNew"><span>📄</span><span>שמור כרשימה חדשה</span></button>
-      <button id="iMerge"><span>➕</span><span>הוסף לרשימה "${esc(active().name)}"</span></button>
-      <button id="iPreset"><span>⭐</span><span>שמור כתבנית</span></button></div>
+      <button id="iNew">${ic('fileplus')}<span>שמור כרשימה חדשה</span></button>
+      <button id="iMerge">${ic('plus')}<span>הוסף לרשימה "${esc(active().name)}"</span></button>
+      <button id="iPreset">${ic('bookmark')}<span>שמור כתבנית</span></button></div>
     <button class="btn ghost" data-close style="width:100%">ביטול</button>`);
   $('#iNew').onclick = () => { const nl = { id:uid(), name, items:[] }; mergeInto(nl, items); state.lists.push(nl); state.activeListId = nl.id; closeSheet(); commit(); toast('הרשימה נשמרה'); };
   $('#iMerge').onclick = () => { const n = mergeInto(active(), items); closeSheet(); commit(); toast(`נוספו ${n} פריטים`); };
@@ -526,11 +629,15 @@ async function checkHashImport(){
 window.addEventListener('hashchange', checkHashImport);
 
 /* ---------- sheet + toast ---------- */
-function openSheet(html){ $('#sheet').innerHTML = html; $('#overlay').classList.add('open'); }
-function closeSheet(){ $('#overlay').classList.remove('open'); $('#sheet').innerHTML = ''; }
+let afterClose = null;
+function openSheet(html, onClose){ afterClose = onClose || null; $('#sheet').innerHTML = html; $('#overlay').classList.add('open'); }
+function closeSheet(){
+  $('#overlay').classList.remove('open'); $('#sheet').innerHTML = '';
+  const f = afterClose; afterClose = null; f?.();
+}
 $('#overlay').addEventListener('click', e => { if (e.target.id === 'overlay' || e.target.closest('[data-close]')) closeSheet(); });
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeSheet();
+  if (e.key === 'Escape' && $('#overlay').classList.contains('open')) closeSheet();
   if (e.key === 'Enter' && e.target.matches('.sheet input')){ e.preventDefault(); $('#sheet .btn:not(.ghost)')?.click(); }
 });
 let toastTimer;
@@ -543,10 +650,14 @@ function toast(msg, btn, fn){
 }
 
 /* sync between tabs */
-window.addEventListener('storage', e => { if (e.key === KEY){ state = load(); render(); } });
+window.addEventListener('storage', e => {
+  if (e.key === KEY){ state = load(); render(); }
+  if (e.key === NAME_KEY){ userName = e.newValue || ''; renderHello(); }
+});
 
 render();
-checkHashImport();
+renderHello();
+if (!userName) askName(true, checkHashImport); else checkHashImport();
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
 </body>
