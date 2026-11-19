@@ -130,6 +130,52 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent)}
 .toast button{color:var(--sky);font-weight:700}
 textarea{min-height:70px;resize:vertical}
 .hint{font-size:12px;color:var(--muted);margin:6px 0 12px}
+.status-tools{display:flex;gap:6px;align-items:center;min-width:0}
+.status-tools select{max-width:150px}
+.catbtn{flex:none;display:inline-flex;align-items:center;gap:4px;padding:5px 8px;border:1px solid var(--line);border-radius:4px;background:var(--card);font-size:13px;color:var(--accent);font-weight:600}
+.catbtn .ic{width:15px;height:15px}
+.catrow{display:flex;align-items:center;gap:8px;margin:16px 2px 6px;padding:4px 6px;border-radius:4px;font-weight:700;font-size:15px}
+.catrow:first-child{margin-top:4px}
+.catrow .cname{display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+.catrow .cname .ic{width:17px;height:17px;color:var(--accent)}
+.catrow .cnt{color:var(--muted);font-weight:400;font-size:13px}
+.catrow .cadd{margin-inline-start:auto;width:30px;height:30px;display:grid;place-items:center;color:var(--accent);border:1px solid var(--line);border-radius:4px;background:var(--card)}
+.catrow .cadd .ic{width:16px;height:16px}
+.catempty{border:1px dashed var(--line);color:var(--muted);font-size:13px;text-align:center;padding:12px;margin-bottom:6px}
+.grip{flex:none;width:22px;height:36px;margin-inline-start:-4px;display:grid;place-items:center;color:var(--muted);touch-action:none;cursor:grab}
+.grip .ic{width:18px;height:18px}
+.item.dragging{opacity:.35}
+.dragghost{position:fixed;z-index:50;pointer-events:none;margin:0;box-shadow:0 10px 28px rgba(0,0,0,.3);opacity:.95}
+.item.drop-before{box-shadow:0 -4px 0 0 var(--sky)}
+.item.drop-after{box-shadow:0 4px 0 0 var(--sky)}
+.catrow.drop-into,.catempty.drop-into{background:var(--ok-bg);outline:2px solid var(--sky)}
+.addcat{flex:none;display:none;align-items:center;gap:4px;background:var(--sky);color:var(--on-sky);border-radius:4px;padding:0 8px;font-size:13px;font-weight:600;max-width:40%}
+.addcat.on{display:inline-flex}
+.addcat span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.addcat .ic{width:14px;height:14px}
+.checks label{display:flex;align-items:center;gap:10px;padding:12px;background:var(--card);border:1px solid var(--line);border-radius:6px;margin-bottom:6px}
+.checks input{width:20px;height:20px;accent-color:var(--accent)}
+#printArea{display:none}
+@media print{
+  @page{size:A4;margin:12mm}
+  html,body{background:#fff!important;color:#000;display:block;min-height:0;height:auto}
+  body>*:not(#printArea){display:none!important}
+  #printArea{display:block;direction:rtl;font:11pt/1.35 system-ui,-apple-system,"Segoe UI",Arial,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #printArea .p-head{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid #1d3557;padding-bottom:6px;margin-bottom:10px}
+  #printArea h1{font-size:18pt;margin:0;color:#1d3557}
+  #printArea .p-meta{color:#555;font-size:10pt}
+  #printArea table{width:100%;border-collapse:collapse}
+  #printArea th,#printArea td{border:1px solid #9aa7b6;padding:5px 7px;text-align:start;vertical-align:top}
+  #printArea th{background:#1d3557;color:#fff;font-weight:700}
+  #printArea td.n{width:2.2em;text-align:center;color:#555}
+  #printArea td.q{width:4.5em}
+  #printArea .p-cat td{background:#dbe5f0;font-weight:700;color:#1d3557}
+  #printArea tr{break-inside:avoid}
+  #printArea thead{display:table-header-group}
+  #printArea img{max-width:80px;max-height:80px;display:block}
+  #printArea a{color:#1d3557;word-break:break-all;text-decoration:none}
+  #printArea .done td{color:#777}
+}
 .welcome{text-align:center;padding:8px 0 4px}
 .welcome .ic{width:48px;height:48px;stroke-width:1.5;color:var(--accent)}
 </style>
@@ -153,7 +199,10 @@ textarea{min-height:70px;resize:vertical}
   <div class="status">
     <div class="status-row">
       <span id="stats"></span>
-      <select id="presetSelect" aria-label="טעינת תבנית"></select>
+      <div class="status-tools">
+        <button class="catbtn" id="addCatBtn" type="button"></button>
+        <select id="presetSelect" aria-label="טעינת תבנית"></select>
+      </div>
     </div>
     <div class="bar"><i id="barFill" style="width:0"></i></div>
     <div class="actions" id="doneActions" hidden>
@@ -165,6 +214,7 @@ textarea{min-height:70px;resize:vertical}
 </main>
 
 <form class="addbar" id="addForm" autocomplete="off">
+  <button class="addcat" id="addCatChip" type="button" aria-label="בטל הוספה לקטגוריה"></button>
   <input id="addInput" placeholder="מה צריך לקחת?" enterkeyhint="done" aria-label="פריט חדש">
   <button class="btn" type="submit">הוסף</button>
 </form>
@@ -172,6 +222,7 @@ textarea{min-height:70px;resize:vertical}
 <div class="overlay" id="overlay"><div class="sheet" id="sheet"></div></div>
 <div class="toast" id="toast"><span id="toastMsg"></span><button id="toastBtn"></button></div>
 <input type="file" id="fileInput" accept=".json,application/json" hidden>
+<div id="printArea"></div>
 
 <script>
 'use strict';
@@ -208,12 +259,19 @@ const P = {
   alert:'<path d="M12 9v4M12 16h.01"/><path d="M10.363 3.591 2.257 17.125a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636-2.87L13.637 3.59a1.914 1.914 0 0 0-3.274 0z"/>',
   user:'<circle cx="12" cy="7" r="4"/><path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/>',
   plane:'<path d="M16 10h4a2 2 0 0 1 0 4h-4l-4 7H9l2-7H7l-2 2H2l2-4-2-4h3l2 2h4L9 3h3z"/>',
+  grip:'<circle cx="9" cy="6" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="18" r="1"/><circle cx="15" cy="6" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="18" r="1"/>',
+  folder:'<path d="M5 4h4l3 3h7a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2"/>',
+  folderplus:'<path d="M12 19H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h4l3 3h7a2 2 0 0 1 2 2v3.5M16 19h6M19 16v6"/>',
+  pdf:'<path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2zM9 13h6M9 17h6"/>',
+  up:'<path d="M12 5v14M18 11l-6-6-6 6"/>',
+  down:'<path d="M12 5v14M18 13l-6 6-6-6"/>',
   clipboard:'<path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="m9 14 2 2 4-4"/>'
 };
 const ic = n => `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${P[n]}</svg>`;
 $('#refreshBtn').innerHTML = ic('refresh');
 $('#presetsBtn').innerHTML = ic('bookmark');
 $('#menuBtn').innerHTML = ic('dots');
+$('#addCatBtn').innerHTML = `${ic('folderplus')}קטגוריה`;
 
 /* ---------- state ---------- */
 const DEFAULT_LIST = 'משימה';
@@ -270,11 +328,19 @@ function render(){
   $('#doneActions').hidden = !done.length;
   $('#resetChecks').innerHTML = `${ic('undo')} אפס סימונים (${done.length})`;
 
-  if (!total){
+  const cats = list.categories || [];
+  if (addCat && !cats.some(c => c.id === addCat)) addCat = '';
+  const chip = $('#addCatChip');
+  chip.classList.toggle('on', !!addCat);
+  chip.innerHTML = addCat ? `<span>${esc(cats.find(c => c.id === addCat).name)}</span>${ic('x')}` : '';
+  $('#addInput').placeholder = addCat ? 'מה להוסיף לקטגוריה?' : 'מה צריך לקחת?';
+
+  if (!total && !cats.length){
     $('#list').innerHTML = `<li class="empty">${ic('clipboard')}<div>הרשימה ריקה.</div><div>הוסיפו ציוד למטה או טענו תבנית.</div></li>`;
     return;
   }
   const row = i => `<li class="item ${i.checked?'done':''}" data-id="${i.id}">
+      <button class="grip" data-act="grip" aria-label="גרירה" tabindex="-1">${ic('grip')}</button>
       <button class="check" data-act="toggle" aria-label="${i.checked?'בטל סימון':'סמן שנלקח'}">${i.checked?ic('check'):''}</button>
       ${i.image?`<img class="thumb" src="${esc(i.image)}" alt="" data-act="img" loading="lazy">`:''}
       <div class="body" data-act="edit">
@@ -283,9 +349,130 @@ function render(){
       </div>
       <span class="tag">${i.checked?'נלקח':'חסר'}</span>
       <button class="del" data-act="del" aria-label="מחק">${ic('x')}</button></li>`;
-  $('#list').innerHTML = todo.map(row).join('') +
-    (done.length ? `<li class="section">נלקח</li>` + done.map(row).join('') : '');
+  if (!cats.length){
+    $('#list').innerHTML = todo.map(row).join('') +
+      (done.length ? `<li class="section">נלקח</li>` + done.map(row).join('') : '');
+    return;
+  }
+  const groups = [{ id:'', name:'ללא קטגוריה' }, ...cats];
+  $('#list').innerHTML = groups.map(g => {
+    const its = list.items.filter(i => catOf(list, i) === g.id);
+    if (!g.id && !its.length) return '';
+    const left = its.filter(i => !i.checked), took = its.filter(i => i.checked);
+    return `<li class="catrow" data-cat="${g.id}">
+        <span class="cname" ${g.id ? 'data-act="cat"' : ''}>${ic('folder')}${esc(g.name)}</span>
+        <span class="cnt">${took.length}/${its.length}</span>
+        ${g.id ? `<button class="cadd" data-act="catadd" aria-label="הוסף פריט לקטגוריה">${ic('plus')}</button>` : ''}
+      </li>` + (its.length ? left.map(row).join('') + took.map(row).join('')
+        : `<li class="catempty" data-cat="${g.id}">גררו לכאן פריטים או לחצו +</li>`);
+  }).join('');
 }
+/* category of an item, '' when none or when its category was deleted */
+const catOf = (list, i) => (i.catId && (list.categories || []).some(c => c.id === i.catId)) ? i.catId : '';
+let addCat = '';
+function ensureCat(list, name){
+  name = String(name || '').trim().slice(0, 60); if (!name) return '';
+  list.categories ||= [];
+  let c = list.categories.find(x => x.name === name);
+  if (!c){ c = { id:uid(), name }; list.categories.push(c); }
+  return c.id;
+}
+const catName = (list, id) => (list.categories || []).find(c => c.id === id)?.name || '';
+
+$('#addCatBtn').onclick = () => catForm();
+$('#addCatChip').onclick = () => { addCat = ''; render(); $('#addInput').focus(); };
+
+function catForm(cat){
+  const list = active();
+  openSheet(`<h2>${cat ? 'שינוי שם קטגוריה' : 'קטגוריה חדשה'}</h2>
+    <p class="hint">${cat ? '' : 'לחלוקת הרשימה לקבוצות, למשל: ציוד אישי, ניירת, תקשורת. אחר כך גוררים פריטים לקטגוריה בעזרת ⋮⋮.'}</p>
+    <div class="field"><input id="cName" value="${esc(cat?.name || '')}" placeholder="למשל: ניירת" maxlength="60"></div>
+    <div class="row"><button class="btn" id="cSave">שמור</button><button class="btn ghost" data-close>ביטול</button></div>`);
+  setTimeout(() => $('#cName')?.focus(), 50);
+  $('#cSave').onclick = () => {
+    const name = $('#cName').value.trim(); if (!name) return;
+    if ((list.categories || []).some(c => c.name === name && c !== cat)) return toast('כבר יש קטגוריה בשם הזה');
+    if (cat) cat.name = name; else ensureCat(list, name);
+    closeSheet(); commit();
+  };
+}
+
+function catMenu(cat){
+  const list = active(), cats = list.categories, k = cats.indexOf(cat);
+  const n = list.items.filter(i => catOf(list, i) === cat.id).length;
+  openSheet(`<h2>${esc(cat.name)}</h2><div class="menu-list">
+    <button id="cmRename">${ic('edit')}<span>שינוי שם</span></button>
+    ${k > 0 ? `<button id="cmUp">${ic('up')}<span>הזז למעלה</span></button>` : ''}
+    ${k < cats.length - 1 ? `<button id="cmDown">${ic('down')}<span>הזז למטה</span></button>` : ''}
+    <button id="cmDelete">${ic('trash')}<span>מחק קטגוריה<small>${n ? `${n} הפריטים יעברו ל"ללא קטגוריה"` : 'הקטגוריה ריקה'}</small></span></button></div>`);
+  $('#cmRename').onclick = () => catForm(cat);
+  const move = d => { cats.splice(k, 1); cats.splice(k + d, 0, cat); closeSheet(); commit(); };
+  if ($('#cmUp')) $('#cmUp').onclick = () => move(-1);
+  if ($('#cmDown')) $('#cmDown').onclick = () => move(1);
+  $('#cmDelete').onclick = () => {
+    cats.splice(k, 1); list.items.forEach(i => { if (i.catId === cat.id) i.catId = ''; });
+    closeSheet(); commit();
+    toast(`"${cat.name}" נמחקה`, 'בטל', () => { cats.splice(k, 0, cat); commit(); });
+  };
+}
+
+/* ---------- drag to reorder / move between categories (touch + mouse) ---------- */
+let drag = null;
+function clearDropMarks(){ document.querySelectorAll('.drop-before,.drop-after,.drop-into').forEach(e => e.classList.remove('drop-before','drop-after','drop-into')); }
+$('#list').addEventListener('pointerdown', e => {
+  const g = e.target.closest('.grip'); if (!g || drag) return;
+  e.preventDefault();
+  const li = g.closest('.item'), r = li.getBoundingClientRect();
+  const ghost = li.cloneNode(true);
+  ghost.classList.add('dragghost');
+  Object.assign(ghost.style, { width: r.width + 'px', left: r.left + 'px', top: r.top + 'px' });
+  document.body.appendChild(ghost);
+  li.classList.add('dragging');
+  drag = { id: li.dataset.id, li, ghost, dy: e.clientY - r.top, target: null, y: e.clientY };
+  try{ g.setPointerCapture(e.pointerId); }catch(err){}
+  drag.timer = setInterval(() => {  // auto-scroll near edges
+    if (!drag) return;
+    if (drag.y < 140) scrollBy(0, -14); else if (drag.y > innerHeight - 120) scrollBy(0, 14);
+  }, 16);
+});
+document.addEventListener('pointermove', e => {
+  if (!drag) return;
+  drag.y = e.clientY;
+  drag.ghost.style.top = (e.clientY - drag.dy) + 'px';
+  clearDropMarks();
+  const el = document.elementFromPoint(e.clientX, e.clientY);
+  const it = el?.closest('.item'), zone = el?.closest('.catrow, .catempty');
+  if (it && it !== drag.li && $('#list').contains(it)){
+    const rr = it.getBoundingClientRect(), after = e.clientY > rr.top + rr.height / 2;
+    drag.target = { type:'item', id: it.dataset.id, after };
+    it.classList.add(after ? 'drop-after' : 'drop-before');
+  } else if (zone){
+    drag.target = { type:'cat', cat: zone.dataset.cat };
+    zone.classList.add('drop-into');
+  } else drag.target = null;
+});
+function endDrag(){
+  if (!drag) return;
+  const { id, ghost, li, target, timer } = drag;
+  drag = null; clearInterval(timer); ghost.remove(); li.classList.remove('dragging'); clearDropMarks();
+  if (!target) return;
+  const list = active(), from = list.items.findIndex(i => i.id === id);
+  if (from < 0) return;
+  const [item] = list.items.splice(from, 1);
+  if (target.type === 'item'){
+    const t = list.items.find(i => i.id === target.id);
+    if (!t){ list.items.splice(from, 0, item); return; }
+    item.catId = catOf(list, t);
+    list.items.splice(list.items.indexOf(t) + (target.after ? 1 : 0), 0, item);
+  } else {
+    item.catId = target.cat || '';
+    const first = list.items.findIndex(i => catOf(list, i) === item.catId);
+    list.items.splice(first < 0 ? list.items.length : first, 0, item);
+  }
+  commit();
+}
+document.addEventListener('pointerup', endDrag);
+document.addEventListener('pointercancel', endDrag);
 const commit = () => { save(); render(); };
 const linkLabel = u => { try{ return new URL(u).hostname.replace(/^www\./,''); }catch(e){ return 'קישור'; } };
 const cleanLink = u => { u = String(u||'').trim(); if (!u) return ''; if (!/^https?:\/\//i.test(u)) u = 'https://' + u;
@@ -346,12 +533,18 @@ $('#addForm').addEventListener('submit', e => {
   const list = active();
   const dup = list.items.find(i => i.name.trim() === name);
   if (dup){ dup.checked = false; toast(`"${name}" כבר ברשימה`); }
-  else list.items.unshift({ id:uid(), name, amount:'', note:'', link:'', image:'', checked:false, createdAt:Date.now() });
+  else list.items.unshift({ id:uid(), name, amount:'', note:'', link:'', image:'', catId:addCat, checked:false, createdAt:Date.now() });
   inp.value = ''; commit(); inp.focus();
 });
 
 $('#list').addEventListener('click', e => {
-  const act = e.target.closest('[data-act]')?.dataset.act; if (!act) return;
+  const act = e.target.closest('[data-act]')?.dataset.act; if (!act || act === 'grip') return;
+  if (act === 'cat' || act === 'catadd'){
+    const id = e.target.closest('.catrow').dataset.cat, cat = (active().categories || []).find(c => c.id === id);
+    if (!cat) return;
+    if (act === 'cat') return catMenu(cat);
+    addCat = cat.id; render(); $('#addInput').focus(); return;
+  }
   const li = e.target.closest('.item'), list = active();
   const idx = list.items.findIndex(i => i.id === li.dataset.id), item = list.items[idx];
   if (act === 'toggle'){ item.checked = !item.checked; commit(); }
@@ -380,8 +573,11 @@ $('#clearDone').onclick = () => {
 };
 
 function editItem(item){
+  const list = active(), cats = list.categories || [];
   openSheet(`<h2>עריכת פריט</h2>
     <div class="field"><label>שם</label><input id="eName" value="${esc(item.name)}"></div>
+    ${cats.length ? `<div class="field"><label>קטגוריה</label><select id="eCat"><option value="">ללא קטגוריה</option>${
+      cats.map(c => `<option value="${c.id}" ${catOf(list, item) === c.id ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}</select></div>` : ''}
     <div class="field"><label>כמות</label><input id="eAmt" value="${esc(item.amount)}" placeholder="למשל: 7, 2 זוגות"></div>
     <div class="field"><label>הערה</label><textarea id="eNote" placeholder="למשל: עם 2 לוחות, לבדוק סוללה">${esc(item.note)}</textarea></div>
     <div class="field"><label>קישור</label><input id="eLink" type="url" inputmode="url" dir="ltr" value="${esc(item.link||'')}" placeholder="https://..."></div>
@@ -408,6 +604,7 @@ function editItem(item){
     item.note = $('#eNote').value.trim();
     item.link = cleanLink(link);
     item.image = image;
+    if ($('#eCat')) item.catId = $('#eCat').value;
     closeSheet();
     if (lsSet(KEY, JSON.stringify(state))) render();
     else { Object.assign(item, old); render(); toast('אין מספיק מקום בזיכרון — נסו תמונה קטנה יותר או מחקו תמונות'); }
@@ -419,7 +616,7 @@ $('#tabs').addEventListener('click', e => {
   const t = e.target.closest('.tab'); if (!t) return;
   if (t.id === 'newListTab') return listForm();
   if (t.dataset.id === state.activeListId) return listMenu();
-  state.activeListId = t.dataset.id; commit();
+  state.activeListId = t.dataset.id; addCat = ''; commit();
 });
 
 function listForm(list){
@@ -455,13 +652,17 @@ function listMenu(){
 }
 
 /* ---------- presets ---------- */
-const stripItems = items => items.map(({name, amount, note, link, image}) => ({ name, amount:amount||'', note:note||'', link:link||'', image:image||'' }));
-function mergeInto(list, items){
+const stripItems = (items, list) => items.map(i => ({ name:i.name, amount:i.amount||'', note:i.note||'', link:i.link||'', image:i.image||'',
+  cat: list ? catName(list, catOf(list, i)) : (i.cat || '') }));
+const catNames = list => (list.categories || []).map(c => c.name);
+function mergeInto(list, items, cats = []){
   let added = 0;
+  cats.forEach(n => ensureCat(list, n));
   for (const p of items){
     const ex = list.items.find(i => i.name.trim() === p.name.trim());
     if (ex){ ex.checked = false; continue; }
-    list.items.push({ id:uid(), name:p.name, amount:p.amount||'', note:p.note||'', link:p.link||'', image:p.image||'', checked:false, createdAt:Date.now() });
+    list.items.push({ id:uid(), name:p.name, amount:p.amount||'', note:p.note||'', link:p.link||'', image:p.image||'',
+      catId: p.cat ? ensureCat(list, p.cat) : '', checked:false, createdAt:Date.now() });
     added++;
   }
   return added;
@@ -481,8 +682,8 @@ function presetsSheet(){
   $('#pSave').onclick = () => {
     const name = prompt('שם התבנית:', list.name); if (!name?.trim()) return;
     const ex = state.presets.find(p => p.name === name.trim());
-    if (ex){ if (!confirm('קיימת תבנית בשם הזה. להחליף?')) return; ex.items = stripItems(list.items); }
-    else state.presets.push({ id:uid(), name:name.trim(), items:stripItems(list.items) });
+    if (ex){ if (!confirm('קיימת תבנית בשם הזה. להחליף?')) return; ex.items = stripItems(list.items, list); ex.cats = catNames(list); }
+    else state.presets.push({ id:uid(), name:name.trim(), items:stripItems(list.items, list), cats:catNames(list) });
     commit(); presetsSheet(); toast('התבנית נשמרה');
   };
   $('#sheet').querySelectorAll('[data-pact]').forEach(b => b.onclick = () => {
@@ -495,15 +696,15 @@ function presetsSheet(){
 }
 function loadPreset(p){
   const list = active();
-  if (!list.items.length){ mergeInto(list, p.items); closeSheet(); commit(); return toast(`נטענה "${p.name}"`); }
+  if (!list.items.length){ mergeInto(list, p.items, p.cats); closeSheet(); commit(); return toast(`נטענה "${p.name}"`); }
   openSheet(`<h2>טעינת "${esc(p.name)}"</h2><div class="menu-list">
     <button id="plMerge">${ic('plus')}<span>הוסף לרשימה הנוכחית<small>פריטים קיימים לא יוכפלו</small></span></button>
     <button id="plReplace">${ic('refresh')}<span>החלף את הרשימה הנוכחית</span></button>
     <button id="plNew">${ic('fileplus')}<span>פתח כרשימה חדשה</span></button></div>`);
-  $('#plMerge').onclick = () => { const n = mergeInto(list, p.items); closeSheet(); commit(); toast(`נוספו ${n} פריטים`); };
-  $('#plReplace').onclick = () => { const before = list.items; list.items = []; mergeInto(list, p.items); closeSheet(); commit();
+  $('#plMerge').onclick = () => { const n = mergeInto(list, p.items, p.cats); closeSheet(); commit(); toast(`נוספו ${n} פריטים`); };
+  $('#plReplace').onclick = () => { const before = list.items; list.items = []; mergeInto(list, p.items, p.cats); closeSheet(); commit();
     toast('הרשימה הוחלפה', 'בטל', () => { list.items = before; commit(); }); };
-  $('#plNew').onclick = () => { const id = uid(), nl = { id, name:p.name, items:[] }; mergeInto(nl, p.items);
+  $('#plNew').onclick = () => { const id = uid(), nl = { id, name:p.name, items:[] }; mergeInto(nl, p.items, p.cats);
     state.lists.push(nl); state.activeListId = id; closeSheet(); commit(); };
 }
 
@@ -523,11 +724,18 @@ async function decodeShare(code){
   if (code[0] === 'z') bytes = await pipe(bytes, DecompressionStream);
   return JSON.parse(new TextDecoder().decode(bytes));
 }
-const listPayload = l => ({ app:'lakachti', type:'list', version:1, name:l.name, items:stripItems(l.items) });
+const listPayload = l => ({ app:'lakachti', type:'list', version:1, name:l.name, categories:catNames(l), items:stripItems(l.items, l) });
 const backupPayload = () => ({ app:'lakachti', type:'backup', version:1, exportedAt:new Date().toISOString(), lists:state.lists, presets:state.presets });
 const appUrl = () => location.href.split('#')[0];
-const listText = l => `רשימת ציוד: ${l.name}\n` + l.items.filter(i=>!i.checked).map(i =>
-  `☐ ${i.name}${i.amount?` x${i.amount}`:''}${i.note?` – ${i.note}`:''}${i.link?` ${i.link}`:''}`).join('\n');
+const listText = l => {
+  const line = i => `☐ ${i.name}${i.amount?` x${i.amount}`:''}${i.note?` – ${i.note}`:''}${i.link?` ${i.link}`:''}`;
+  const left = l.items.filter(i => !i.checked);
+  const groups = [{ id:'', name:'' }, ...(l.categories || [])];
+  return `רשימת ציוד: ${l.name}\n` + groups.map(g => {
+    const its = left.filter(i => catOf(l, i) === g.id);
+    return its.length ? (g.name ? `\n*${g.name}*\n` : '') + its.map(line).join('\n') : '';
+  }).filter(Boolean).join('\n');
+};
 
 function download(obj, filename){
   const a = document.createElement('a');
@@ -548,7 +756,8 @@ $('#menuBtn').onclick = () => {
     <div class="menu-list">
       <button id="mLink">${ic('share')}<span>שתף קישור<small>מי שפותח מקבל עותק של הרשימה</small></span></button>
       <button id="mText">${ic('message')}<span>שתף כטקסט<small>לוואטסאפ, רק מה שעוד חסר</small></span></button>
-      <button id="mFile">${ic('upload')}<span>ייצוא לקובץ</span></button>
+      <button id="mPdf">${ic('pdf')}<span>ייצוא ל-PDF<small>טבלה: מספר, פריט, כמות, תיאור</small></span></button>
+      <button id="mFile">${ic('upload')}<span>ייצוא לקובץ<small>לייבוא באפליקציה אצל מישהו אחר</small></span></button>
     </div>
     <div class="section">ייבוא</div>
     <div class="menu-list">
@@ -580,10 +789,59 @@ $('#menuBtn').onclick = () => {
     if (navigator.canShare?.({ files:[file] })){ try{ await navigator.share({ files:[file], title:l.name }); return; }catch(e){ if (e.name==='AbortError') return; } }
     download(obj, name);
   };
+  $('#mPdf').onclick = () => pdfSheet(l);
   $('#mBackup').onclick = () => download(backupPayload(), `lakachti-backup-${new Date().toISOString().slice(0,10)}.json`);
   $('#mImport').onclick = () => $('#fileInput').click();
   $('#mName').onclick = () => askName(false);
 };
+
+/* ---------- PDF export (printable table → "Save as PDF") ---------- */
+function pdfSheet(l){
+  const hasLinks = l.items.some(i => i.link), hasPics = l.items.some(i => i.image);
+  const opt = (id, label, sub, on, show = true) => show ? `<label><input type="checkbox" id="${id}" ${on ? 'checked' : ''}><span>${label}${sub ? `<small style="display:block;color:var(--muted);font-size:12px">${sub}</small>` : ''}</span></label>` : '';
+  openSheet(`<h2>ייצוא ל-PDF</h2>
+    <p class="hint">טבלה עם מספר, פריט, כמות ותיאור${(l.categories || []).length ? ', מחולקת לקטגוריות' : ''}.</p>
+    <div class="checks">
+      ${opt('pLinks', 'צרף קישורים', hasLinks ? '' : 'אין קישורים ברשימה', hasLinks)}
+      ${opt('pPics', 'צרף תמונות', hasPics ? '' : 'אין תמונות ברשימה', hasPics)}
+      ${opt('pStatus', 'עמודת סטטוס (חסר / נלקח)', '', false)}
+      ${opt('pLeft', 'רק פריטים שעוד חסרים', '', false)}
+    </div>
+    <div class="row" style="margin-top:10px"><button class="btn" id="pGo">${ic('pdf')} צור PDF</button><button class="btn ghost" data-close>ביטול</button></div>
+    <p class="hint">בחלון שייפתח בחרו "שמור כ-PDF". באייפון: לחצו על כפתור השיתוף בחלון ההדפסה ובחרו "שמור בקבצים" או שלחו בוואטסאפ.</p>`);
+  if (!hasLinks) $('#pLinks').disabled = true;
+  if (!hasPics) $('#pPics').disabled = true;
+  $('#pGo').onclick = () => {
+    const o = { links: $('#pLinks').checked, pics: $('#pPics').checked, status: $('#pStatus').checked, left: $('#pLeft').checked };
+    closeSheet(); printList(l, o);
+  };
+}
+async function printList(l, o){
+  const items = l.items.filter(i => !o.left || !i.checked);
+  if (!items.length) return toast('אין פריטים לייצוא');
+  const cats = l.categories || [];
+  const cols = 4 + (o.links ? 1 : 0) + (o.pics ? 1 : 0) + (o.status ? 1 : 0);
+  let n = 0;
+  const row = i => `<tr class="${i.checked ? 'done' : ''}"><td class="n">${++n}</td><td>${esc(i.name)}</td><td class="q">${esc(i.amount)}</td><td>${esc(i.note)}</td>${
+    o.links ? `<td>${i.link ? `<a href="${esc(i.link)}">${esc(i.link)}</a>` : ''}</td>` : ''}${
+    o.pics ? `<td>${i.image ? `<img src="${esc(i.image)}" alt="">` : ''}</td>` : ''}${
+    o.status ? `<td>${i.checked ? 'נלקח' : 'חסר'}</td>` : ''}</tr>`;
+  const groups = cats.length ? [{ id:'', name:'ללא קטגוריה' }, ...cats] : [{ id:null }];
+  const body = groups.map(g => {
+    const its = g.id === null ? items : items.filter(i => catOf(l, i) === g.id);
+    if (!its.length) return '';
+    return (g.id !== null ? `<tr class="p-cat"><td colspan="${cols}">${esc(g.name)} (${its.length})</td></tr>` : '') + its.map(row).join('');
+  }).join('');
+  const date = new Date().toLocaleDateString('he-IL');
+  $('#printArea').innerHTML = `<div class="p-head"><h1>${esc(l.name)}</h1><div class="p-meta">${userName ? esc(userName) + ' · ' : ''}${date} · ${items.length} פריטים</div></div>
+    <table><thead><tr><th>#</th><th>פריט</th><th>כמות</th><th>תיאור</th>${o.links ? '<th>קישור</th>' : ''}${o.pics ? '<th>תמונה</th>' : ''}${o.status ? '<th>סטטוס</th>' : ''}</tr></thead>
+    <tbody>${body}</tbody></table>`;
+  await Promise.all([...$('#printArea').querySelectorAll('img')].map(im => im.decode().catch(() => {})));
+  const title = document.title;
+  document.title = `${l.name} - ${date}`;  // becomes the PDF file name
+  window.addEventListener('afterprint', () => { document.title = title; }, { once:true });
+  setTimeout(() => window.print(), 50);
+}
 
 $('#fileInput').onchange = async e => {
   const f = e.target.files[0]; e.target.value = '';
@@ -596,7 +854,13 @@ function validItems(items){
   if (!Array.isArray(items)) throw 0;
   return items.filter(i => i && typeof i.name === 'string' && i.name.trim())
     .map(i => ({ name:i.name.trim().slice(0,200), amount:String(i.amount||'').slice(0,100), note:String(i.note||'').slice(0,500),
-      link:cleanLink(i.link), image:cleanImage(i.image) }));
+      link:cleanLink(i.link), image:cleanImage(i.image), cat:String(i.cat||'').slice(0,60) }));
+}
+const validCats = c => Array.isArray(c) ? c.map(x => String(x||'').slice(0,60)).filter(Boolean) : [];
+/* backup lists keep catId; turn it into a category name before validating */
+function backupItems(l){
+  const cats = Array.isArray(l.categories) ? l.categories : [];
+  return (Array.isArray(l.items) ? l.items : []).map(i => ({ ...i, cat: cats.find(c => c && c.id === i?.catId)?.name || '' }));
 }
 function handleImport(obj){
   if (!obj || obj.app !== 'lakachti') throw new Error('bad');
@@ -608,9 +872,10 @@ function handleImport(obj){
       <button id="bReplace">${ic('alert')}<span>החלף הכל<small>הנתונים הנוכחיים יימחקו</small></span></button></div>
       <button class="btn ghost" data-close style="width:100%">ביטול</button>`);
     const build = () => ({
-      lists: obj.lists.map(l => { const nl = { id:uid(), name:String(l.name||'רשימה'), items:[] }; mergeInto(nl, validItems(l.items));
+      lists: obj.lists.map(l => { const nl = { id:uid(), name:String(l.name||'רשימה'), items:[] };
+        mergeInto(nl, validItems(backupItems(l)), validCats((l.categories||[]).map(c => c?.name)));
         (l.items||[]).forEach(src => { const it = nl.items.find(x => x.name === String(src?.name||'').trim()); if (it && src.checked) it.checked = true; }); return nl; }),
-      presets: (obj.presets||[]).map(p => ({ id:uid(), name:String(p.name||'תבנית'), items:validItems(p.items) }))
+      presets: (obj.presets||[]).map(p => ({ id:uid(), name:String(p.name||'תבנית'), items:validItems(p.items), cats:validCats(p.cats) }))
     });
     $('#bMerge').onclick = () => { const b = build(); state.lists.push(...b.lists); state.presets.push(...b.presets); closeSheet(); commit(); toast('הגיבוי נוסף'); };
     $('#bReplace').onclick = () => { if (!confirm('למחוק את כל הנתונים הנוכחיים ולהחליף בגיבוי?')) return;
@@ -619,7 +884,7 @@ function handleImport(obj){
     return;
   }
   if (obj.type !== 'list') throw new Error('bad');
-  const items = validItems(obj.items), name = String(obj.name || 'רשימה משותפת').slice(0,60);
+  const items = validItems(obj.items), cats = validCats(obj.categories), name = String(obj.name || 'רשימה משותפת').slice(0,60);
   openSheet(`<h2>התקבלה רשימה</h2>
     <p><b>${esc(name)}</b> · ${items.length} פריטים</p>
     <p class="hint">${items.slice(0,8).map(i => esc(i.name)).join(', ')}${items.length>8?'…':''}</p>
@@ -628,9 +893,9 @@ function handleImport(obj){
       <button id="iMerge">${ic('plus')}<span>הוסף לרשימה "${esc(active().name)}"</span></button>
       <button id="iPreset">${ic('bookmark')}<span>שמור כתבנית</span></button></div>
     <button class="btn ghost" data-close style="width:100%">ביטול</button>`);
-  $('#iNew').onclick = () => { const nl = { id:uid(), name, items:[] }; mergeInto(nl, items); state.lists.push(nl); state.activeListId = nl.id; closeSheet(); commit(); toast('הרשימה נשמרה'); };
-  $('#iMerge').onclick = () => { const n = mergeInto(active(), items); closeSheet(); commit(); toast(`נוספו ${n} פריטים`); };
-  $('#iPreset').onclick = () => { state.presets.push({ id:uid(), name, items }); closeSheet(); commit(); toast('נשמר כתבנית'); };
+  $('#iNew').onclick = () => { const nl = { id:uid(), name, items:[] }; mergeInto(nl, items, cats); state.lists.push(nl); state.activeListId = nl.id; closeSheet(); commit(); toast('הרשימה נשמרה'); };
+  $('#iMerge').onclick = () => { const n = mergeInto(active(), items, cats); closeSheet(); commit(); toast(`נוספו ${n} פריטים`); };
+  $('#iPreset').onclick = () => { state.presets.push({ id:uid(), name, items, cats }); closeSheet(); commit(); toast('נשמר כתבנית'); };
 }
 
 async function checkHashImport(){
